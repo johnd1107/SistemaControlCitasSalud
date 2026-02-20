@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SaludPlus | Gestión Médica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="nav-container">
+            <span class="logo">🏥 SaludPlus</span>
+            <nav>
+                <a href="{{ url_for('inicio') }}">Inicio</a>
+                <a href="{{ url_for('acerca_de') }}">Nosotros</a>
+                <a href="{{ url_for('clientes') }}">Pacientes</a>
+                <a href="{{ url_for('factura') }}">Factura</a>
+            </nav>
+        </div>
+    </header>
+    <main class="fade-in">
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2026 Sistema de Gestión de Salud | Ecuador</p>
+    </footer>
+</body>
+</html>

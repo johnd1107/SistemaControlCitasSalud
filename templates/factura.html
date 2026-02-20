@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="invoice-box">
+    <div class="invoice-header">
+        <h2>RECIBO DE PAGO</h2>
+        <p>No: {{ datos.nro }}</p>
+    </div>
+    <div class="invoice-details">
+        <p><strong>Fecha:</strong> {{ datos.fecha }}</p>
+        <p><strong>Paciente:</strong> {{ datos.paciente }}</p>
+        <hr>
+        <p><strong>Concepto:</strong> {{ datos.servicio }}</p>
+        <h3 class="total">Total Pagado: ${{ datos.total }}</h3>
+    </div>
+    <button class="btn-print" onclick="window.print()">Imprimir Comprobante</button>
+</div>
+{% endblock %}

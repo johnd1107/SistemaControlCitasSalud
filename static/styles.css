@@ -1,0 +1,26 @@
+:root { --blue: #007bff; --dark: #1a2a3a; --success: #28a745; --bg: #f4f7f9; }
+
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; }
+
+/* Navegación Moderna */
+header { background: var(--dark); color: white; padding: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.nav-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+nav a { color: #ccc; text-decoration: none; margin-left: 20px; transition: 0.3s; font-weight: 500; }
+nav a:hover { color: white; border-bottom: 2px solid var(--blue); }
+
+/* Contenedores y Cards */
+main { max-width: 1000px; margin: 40px auto; padding: 20px; }
+.card, .invoice-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+/* Tablas Estilizadas */
+.styled-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+.styled-table thead tr { background: var(--blue); color: white; text-align: left; }
+.styled-table th, .styled-table td { padding: 15px; border-bottom: 1px solid #eee; }
+.badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; color: white; }
+.badge.confirmado { background: var(--success); }
+.badge.pendiente { background: #ffc107; color: #333; }
+
+/* Factura Estilo Recibo */
+.invoice-box { border-top: 8px solid var(--blue); text-align: center; }
+.total { font-size: 2rem; color: var(--success); margin: 20px 0; }
+.btn-print { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; }
