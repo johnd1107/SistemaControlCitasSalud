@@ -1,26 +1,105 @@
-:root { --blue: #007bff; --dark: #1a2a3a; --success: #28a745; --bg: #f4f7f9; }
+:root {
+    --gold: #D4AF37;
+    --dark-bg: #1a1a1a;
+    --luxury-black: #0f0f0f;
+    --text-light: #f4f4f4;
+    --white: #ffffff;
+}
 
-body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; }
+body {
+    font-family: 'Playfair Display', serif; /* Tipografía clásica de joyería */
+    background-color: #f9f9f9;
+    margin: 0;
+    color: var(--luxury-black);
+}
 
-/* Navegación Moderna */
-header { background: var(--dark); color: white; padding: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-.nav-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-nav a { color: #ccc; text-decoration: none; margin-left: 20px; transition: 0.3s; font-weight: 500; }
-nav a:hover { color: white; border-bottom: 2px solid var(--blue); }
+/* Navegación Elegante */
+nav {
+    background-color: var(--luxury-black);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 3px solid var(--gold);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 
-/* Contenedores y Cards */
-main { max-width: 1000px; margin: 40px auto; padding: 20px; }
-.card, .invoice-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+nav a {
+    color: var(--gold);
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    transition: 0.3s;
+}
 
-/* Tablas Estilizadas */
-.styled-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
-.styled-table thead tr { background: var(--blue); color: white; text-align: left; }
-.styled-table th, .styled-table td { padding: 15px; border-bottom: 1px solid #eee; }
-.badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; color: white; }
-.badge.confirmado { background: var(--success); }
-.badge.pendiente { background: #ffc107; color: #333; }
+nav a:hover {
+    color: var(--white);
+    text-shadow: 0 0 8px var(--gold);
+}
 
-/* Factura Estilo Recibo */
-.invoice-box { border-top: 8px solid var(--blue); text-align: center; }
-.total { font-size: 2rem; color: var(--success); margin: 20px 0; }
-.btn-print { background: var(--blue); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; }
+/* Contenedores (Cards) */
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-top: 4px solid var(--gold);
+}
+
+/* Tablas Profesionales */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+}
+
+.styled-table thead tr {
+    background-color: var(--luxury-black);
+    color: var(--gold);
+    text-align: left;
+}
+
+.styled-table th, .styled-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Botones Luxury */
+.btn-oro {
+    background-color: var(--gold);
+    color: var(--luxury-black);
+    border: none;
+    padding: 12px 25px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    transition: 0.4s;
+}
+
+.btn-oro:hover {
+    background-color: var(--luxury-black);
+    color: var(--gold);
+    box-shadow: 0 0 15px var(--gold);
+}
+
+/* Formularios */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
