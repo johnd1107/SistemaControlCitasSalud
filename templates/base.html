@@ -5,24 +5,24 @@
     <title>SaludPlus</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body style="font-family: Arial, sans-serif; margin: 0; background: #f4f7f6;">
+<body style="font-family: sans-serif; margin: 0; background: #f4f7f6;">
     <nav style="background: #2c3e50; padding: 15px; color: white; display: flex; justify-content: space-between;">
-        <div style="font-weight: bold;">SALUDPLUS +</div>
+        <strong>SALUDPLUS +</strong>
         <div>
             {% if current_user.is_authenticated %}
-                <a href="{{ url_for('index') }}" style="color:white; margin-right:20px; text-decoration:none;">Inicio</a>
-                <a href="{{ url_for('inventario') }}" style="color:white; margin-right:20px; text-decoration:none;">Inventario</a>
-                <a href="{{ url_for('logout') }}" style="color:#ff7675; text-decoration:none;">Cerrar Sesión</a>
+                <a href="{{ url_for('index') }}" style="color:white; margin-right:15px; text-decoration:none;">Inicio</a>
+                <a href="{{ url_for('inventario') }}" style="color:white; margin-right:15px; text-decoration:none;">Inventario</a>
+                <a href="{{ url_for('logout') }}" style="color:#ff7675; text-decoration:none;">Salir</a>
             {% else %}
-                <a href="{{ url_for('login') }}" style="color:white; margin-right:20px; text-decoration:none;">Login</a>
+                <a href="{{ url_for('login') }}" style="color:white; margin-right:15px; text-decoration:none;">Login</a>
                 <a href="{{ url_for('registro') }}" style="color:white; text-decoration:none;">Registro</a>
             {% endif %}
         </div>
     </nav>
-    <div style="padding: 30px;">
+    <div style="padding: 20px;">
         {% with messages = get_flashed_messages() %}
           {% if messages %}
-            {% for m in messages %}<p style="color: red;">{{ m }}</p>{% endfor %}
+            {% for m in messages %}<div style="color:red; border:1px solid red; padding:10px; margin-bottom:10px;">{{ m }}</div>{% endfor %}
           {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}

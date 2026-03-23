@@ -1,12 +1,20 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, Usuario, Paciente, Producto
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'seguridad_salud_2026'
-# Conexión rectificada a MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/saludplus_db'
+app.config['SECRET_KEY'] = 'saludplus_secret_2026'
+
+# --- CONFIGURACIÓN DE BASE DE DATOS DUAL ---
+if os.environ.get('RENDER'):
+    # Configuración para la NUBE (Render)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///render_salud.db'
+else:
+    # Configuración para tu PC (XAMPP)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost/saludplus_db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -16,6 +24,8 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     return Usuario.query.get(int(user_id))
+
+# --- RUTAS ---
 
 @app.route('/')
 @login_required
@@ -29,22 +39,22 @@ def login():
         if user and check_password_hash(user.password, request.form['password']):
             login_user(user)
             return redirect(url_for('index'))
-        flash('Credenciales incorrectas')
+        flash('Correo o contraseña incorrectos.')
     return render_template('login.html')
 
 @app.route('/registro', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
-        pw_hash = generate_password_hash(request.form['password'], method='scrypt')
-        nuevo = Usuario(nombre=request.form['nombre'], email=request.form['email'], password=pw_hash)
-        db.session.add(nuevo)
+        hashed_pw = generate_password_hash(request.form['password'], method='scrypt')
+        nuevo_u = Usuario(nombre=request.form['nombre'], email=request.form['email'], password=hashed_pw)
+        db.session.add(nuevo_u)
         db.session.commit()
         return redirect(url_for('login'))
     return render_template('registro.html')
 
 @app.route('/inventario')
 @login_required
-def inventario(): # Endpoint corregido para evitar BuildError
+def inventario():
     prods = Producto.query.all()
     return render_template('inventario.html', lista=prods)
 
