@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 50px auto; padding: 30px; border-top: 5px solid var(--accent);">
+    <h2 style="text-align: center; color: var(--primary); font-family: 'Playfair Display', serif;">Registro de Nuevo Personal</h2>
+    <p style="text-align: center; color: #666; margin-bottom: 25px;">Cree una cuenta para acceder a la gestión de citas y pacientes.</p>
+
+    <form method="POST" action="{{ url_for('registro') }}">
+        
+        <div class="form-group">
+            <label style="font-weight: bold; color: var(--primary);">Nombre Completo:</label>
+            <input type="text" name="nombre" placeholder="Ej. Dr. Wilson Paredes" required 
+                   style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div class="form-group">
+            <label style="font-weight: bold; color: var(--primary);">Correo Electrónico Institucional:</label>
+            <input type="email" name="email" placeholder="usuario@saludplus.com" required 
+                   style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div class="form-group">
+            <label style="font-weight: bold; color: var(--primary);">Contraseña:</label>
+            <input type="password" name="password" placeholder="Mínimo 8 caracteres" required 
+                   style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <button type="submit" class="btn-oro" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 1.1em;">
+            Finalizar Registro
+        </button>
+    </form>
+
+    <div style="margin-top: 25px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+        <p>¿Ya tiene una cuenta administrativa? <a href="{{ url_for('login') }}" style="color: var(--accent); font-weight: bold; text-decoration: none;">Inicie Sesión aquí</a></p>
+    </div>
+</div>
+{% endblock %}

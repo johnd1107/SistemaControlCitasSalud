@@ -1,12 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="hero">
-    <h2>Bienvenido al Sistema de Gestión</h2>
-    <p>Administre citas y pacientes con un solo clic.</p>
-    <div class="grid">
-        <div class="box"><h3>Citas hoy: 8</h3></div>
-        <div class="box"><h3>Pacientes: 150</h3></div>
+<div class="dashboard-container">
+    <header style="margin-bottom: 30px;">
+        <h1 style="color: var(--primary);">Bienvenido, {{ usuario.nombre }}</h1>
+        <p style="color: #666;">Sistema de Gestión Hospitalaria SaludPlus</p>
+    </header>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
+        <div class="card-stat" style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #3498db; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0; color: #7f8c8d;">Pacientes</h3>
+            <p style="font-size: 24px; font-weight: bold; margin: 10px 0;">Consultar</p>
+            <a href="#" style="color: #3498db; text-decoration: none;">Ver listado →</a>
+        </div>
+
+        <div class="card-stat" style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #18bc9c; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0; color: #7f8c8d;">Inventario</h3>
+            <p style="font-size: 24px; font-weight: bold; margin: 10px 0;">Insumos Médicos</p>
+            <a href="{{ url_for('inventario') }}" style="color: #18bc9c; text-decoration: none;">Gestionar stock →</a>
+        </div>
+    </div>
+
+    <div class="card" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+        <h2 style="color: var(--primary); margin-top: 0;">Buscar Paciente</h2>
+        <p style="color: #666;">Ingrese la cédula para ver historial clínico y recetas.</p>
+
+        <form action="#" method="GET" style="display: flex; gap: 10px; margin-top: 20px;">
+            <input type="text" name="cedula" placeholder="Ej: 1712345678" required
+                   style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            <button type="submit" class="btn-oro" style="padding: 12px 30px;">Buscar</button>
+        </form>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h3 style="color: var(--primary);">Acciones Rápidas</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <button class="btn-custom" style="background: #2c3e50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Nueva Consulta</button>
+            <button class="btn-custom" style="background: #2c3e50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Generar Reporte Mensual</button>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,55 +1,29 @@
-import json
-import csv
-import os
-from database import db
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
+db = SQLAlchemy()
 
-# 2.4. Definir el modelo de datos (SQLAlchemy)
-class Joya(db.Model):
+class Usuario(UserMixin, db.Model):
+    __tablename__ = 'usuarios'
+    id = db.Column('id_usuario', db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+
+    def get_id(self):
+        return str(self.id)
+
+class Paciente(db.Model):
+    __tablename__ = 'pacientes'
+    id_paciente = db.Column(db.Integer, primary_key=True)
+    cedula = db.Column(db.String(15), unique=True, nullable=False)
+    nombre = db.Column(db.String(100), nullable=False)
+    historial_clinico = db.Column(db.Text)
+
+class Producto(db.Model):
+    __tablename__ = 'productos'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
-    material = db.Column(db.String(50), nullable=False)
+    categoria = db.Column(db.String(50))
     cantidad = db.Column(db.Integer, nullable=False)
     precio = db.Column(db.Float, nullable=False)
-
-
-# 2.2. Persistencia con Archivos TXT, JSON y CSV
-def guardar_persistencia_multiple(n, m, c, p):
-    # Crear carpeta data si no existe
-    if not os.path.exists('data'):
-        os.makedirs('data')
-
-    # Creamos un diccionario para el formato JSON
-    datos_dict = {
-        "nombre": n,
-        "material": m,
-        "cantidad": c,
-        "precio": p
-    }
-
-    # --- PERSISTENCIA EN TXT (usando open) ---
-    with open('data/datos.txt', 'a', encoding='utf-8') as f:
-        f.write(f"JOYERIA: {n} | MAT: {m} | CANT: {c} | PVP: {p}\n")
-
-    # --- PERSISTENCIA EN JSON (librería json) ---
-    json_path = 'data/datos.json'
-    lista_temporal = []
-    if os.path.exists(json_path):
-        with open(json_path, 'r', encoding='utf-8') as f:
-            try:
-                lista_temporal = json.load(f)
-            except:
-                lista_temporal = []
-
-    lista_temporal.append(datos_dict)
-    with open(json_path, 'w', encoding='utf-8') as f:
-        json.dump(lista_temporal, f, indent=4)
-
-    # --- PERSISTENCIA EN CSV (librería csv) ---
-    csv_path = 'data/datos.csv'
-    escribir_cabecera = not os.path.exists(csv_path)
-    with open(csv_path, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        if escribir_cabecera:
-            writer.writerow(['Nombre', 'Material', 'Cantidad', 'Precio'])
-        writer.writerow([n, m, c, p])
