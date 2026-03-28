@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-4">
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Volver</a>
+    <h2 class="mt-2">Historial Clínico: {{ p.nombre }} {{ p.apellido }}</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 mb-4 bg-light">
+            <h5>Datos Generales</h5>
+            <p><strong>CI:</strong> {{ p.cedula }}</p>
+            <p><strong>Email:</strong> {{ p.email }}</p>
+            <button class="btn btn-primary w-100">Nueva Consulta</button>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <h4>Consultas Recientes</h4>
+        {% if historial %}
+            {% for h in historial %}
+            <div class="card mb-3">
+                <div class="card-body history-line">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-primary">{{ h.fecha }}</h6>
+                        <span class="badge bg-success">Atendido por: {{ h.nombre_medico }}</span>
+                    </div>
+                    <p class="mt-2"><strong>Diagnóstico:</strong> {{ h.diagnostico }}</p>
+                    <p class="text-muted small">{{ h.observaciones }}</p>
+                    <a href="/imprimir-receta/{{ h.id_historial }}" class="btn btn-outline-danger btn-sm">💊 Descargar Receta (PDF)</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning">No hay registros clínicos previos.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
