@@ -1,14 +1,43 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg p-4 mx-auto" style="max-width: 500px;">
-        <h3 class="text-center">Registro de Paciente</h3>
-        <form method="POST">
-            <input type="text" name="ced" placeholder="Cédula" class="form-control mb-2" required>
-            <input type="text" name="nom" placeholder="Nombre completo" class="form-control mb-2" required>
-            <input type="number" name="edad" placeholder="Edad" class="form-control mb-2" required>
-            <input type="text" name="dir" placeholder="Dirección" class="form-control mb-2" required>
-            <button class="btn btn-primary w-100">Registrarse</button>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+    <div class="card shadow-lg border-0 p-4" style="width: 480px; border-radius: 20px;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-primary">Registro de Paciente</h2>
+            <p class="text-muted small">Crea tu acceso al sistema Salud+</p>
+        </div>
+
+        <form action="/registro_paciente" method="POST">
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Cédula (10 dígitos)</label>
+                <input type="text" name="ced" class="form-control" placeholder="0000000000" maxlength="10" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Nombre Completo</label>
+                <input type="text" name="nom" class="form-control" placeholder="Ej: Juan Pérez" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Contraseña Personalizada</label>
+                <input type="password" name="pass" class="form-control" placeholder="Mínimo 4 caracteres" required>
+            </div>
+            <div class="row mb-4">
+                <div class="col-4">
+                    <label class="form-label small fw-bold">Edad</label>
+                    <input type="number" name="edad" class="form-control" required>
+                </div>
+                <div class="col-8">
+                    <label class="form-label small fw-bold">Dirección</label>
+                    <input type="text" name="dir" class="form-control" placeholder="Ciudad/Barrio" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm mb-3">Finalizar Registro</button>
+
+            <div class="text-center">
+                <a href="{{ url_for('login') }}" class="text-decoration-none text-secondary small">
+                    <i class="bi bi-arrow-left"></i> Volver al Inicio
+                </a>
+            </div>
         </form>
     </div>
 </div>

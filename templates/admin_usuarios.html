@@ -1,56 +1,55 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary"><i class="bi bi-people-fill me-2"></i>Control de Cuentas</h2>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary fw-bold">
+            <i class="bi bi-house-door"></i> Volver al Inicio
+        </a>
+    </div>
+
     <div class="row">
-        {% if session['rol'] == 'admin' %}
         <div class="col-md-4">
             <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-primary text-white fw-bold">Registrar Nuevo Médico</div>
+                <div class="card-header bg-primary text-white">Registrar Nuevo Médico</div>
                 <div class="card-body">
-                    <form method="POST">
-                        <input type="text" name="ced" placeholder="Cédula" class="form-control mb-2" required>
-                        <input type="text" name="nom" placeholder="Nombre completo" class="form-control mb-2" required>
-                        <input type="text" name="esp" placeholder="Especialidad (Ej: Odontología)" class="form-control mb-2" required>
-                        <button type="submit" class="btn btn-primary w-100">Guardar Médico</button>
+                    <form action="/admin_usuarios" method="POST">
+                        <input type="text" name="ced_m" class="form-control mb-2" placeholder="Cédula" required>
+                        <input type="text" name="nom_m" class="form-control mb-2" placeholder="Nombre completo" required>
+                        <input type="text" name="esp_m" class="form-control mb-3" placeholder="Especialidad (Ej: Medicina General)" required>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Guardar Especialista</button>
                     </form>
                 </div>
             </div>
         </div>
-        {% endif %}
 
-        <div class="{% if session['rol'] == 'admin' %}col-md-8{% else %}col-md-12{% endif %}">
-            <h4 class="fw-bold text-secondary">Control de Usuarios y Pacientes</h4>
-            <ul class="nav nav-tabs mt-3" id="tabSalud">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#medicos">Médicos</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#pacientes">Pacientes</button></li>
-            </ul>
-
-            <div class="tab-content border border-top-0 p-3 bg-white shadow-sm">
-                <div class="tab-pane fade show active" id="medicos">
-                    <table class="table">
-                        <thead><tr><th>Nombre</th><th>Especialidad</th></tr></thead>
-                        <tbody>
-                            {% for m in medicos %}
-                            <tr><td>{{ m.nombre }}</td><td><span class="badge bg-info text-dark">{{ m.especialidad }}</span></td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="tab-pane fade" id="pacientes">
-                    <table class="table">
-                        <thead><tr><th>Paciente</th><th>Cédula</th><th>Acción</th></tr></thead>
-                        <tbody>
-                            {% for p in pacientes %}
-                            <tr>
-                                <td>{{ p.nombre }}</td>
-                                <td>{{ p.cedula }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-success disabled">Pendiente</button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 p-3">
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#m">Médicos</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#p">Pacientes</button></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="m">
+                        <table class="table table-hover">
+                            <thead><tr><th>Médico</th><th>Especialidad</th></tr></thead>
+                            <tbody>
+                                {% for m in medicos %}
+                                <tr><td>{{ m.nombre }}</td><td><span class="badge bg-info">{{ m.especialidad }}</span></td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="p">
+                        <table class="table table-hover">
+                            <thead><tr><th>Paciente</th><th>Ubicación</th></tr></thead>
+                            <tbody>
+                                {% for p in pacientes %}
+                                <tr><td>{{ p.nombre }}</td><td>{{ p.domicilio }}</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

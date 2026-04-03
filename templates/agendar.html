@@ -1,33 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <div class="card shadow border-0 p-4">
-        <h3 class="text-primary fw-bold mb-4">Reservar Turno Médico</h3>
+<div class="container d-flex justify-content-center mt-5">
+    <div class="card shadow-lg border-0 p-4" style="width: 500px; border-radius: 15px;">
+        <h3 class="text-center fw-bold text-success mb-4"><i class="bi bi-calendar-check me-2"></i>Reservar Cita</h3>
+
         <form action="/agendar" method="POST">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Seleccione Médico y Especialidad</label>
+                <select name="id_m" class="form-select form-control-lg" required id="medicoSelect">
+                    <option value="" disabled selected>Elija un especialista...</option>
+                    {% for m in medicos %}
+                    <option value="{{ m.id_usuario }}" data-esp="{{ m.especialidad }}">
+                        {{ m.nombre }} - {{ m.especialidad }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <input type="hidden" name="esp" id="especialidadInput">
+
             <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Médico Disponible</label>
-                    <select name="id_medico" class="form-select" required>
-                        {% for m in medicos %}
-                        <option value="{{ m.id_usuario }}">{{ m.nombre }} ({{ m.especialidad }})</option>
-                        {% endfor %}
-                    </select>
+                <div class="col-6 mb-3">
+                    <label class="form-label fw-bold">Fecha</label>
+                    <input type="date" name="fec" class="form-control" min="{{ hoy }}" required>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Especialidad Requerida</label>
-                    <input type="text" name="especialidad" class="form-control" placeholder="Ej: Pediatría" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Fecha</label>
-                    <input type="date" name="fecha" class="form-control" min="{{ hoy }}" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Hora</label>
-                    <input type="time" name="hora" class="form-control" required>
+                <div class="col-6 mb-3">
+                    <label class="form-label fw-bold">Hora</label>
+                    <input type="time" name="hor" class="form-control" required>
                 </div>
             </div>
-            <button type="submit" class="btn btn-success w-100 mt-3">Confirmar Cita</button>
+
+            <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm mt-3">Confirmar Turno</button>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('index') }}" class="text-muted small text-decoration-none">Cancelar y Volver</a>
+            </div>
         </form>
     </div>
 </div>
+
+<script>
+    // Script simple para capturar la especialidad del médico seleccionado
+    document.getElementById('medicoSelect').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        var especialidad = selectedOption.getAttribute('data-esp');
+        document.getElementById('especialidadInput').value = especialidad;
+    });
+</script>
 {% endblock %}
