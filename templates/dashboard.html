@@ -1,30 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    {% if session['rol'] == 'admin' %}
-    <div class="col-md-4 mb-4">
-        <div class="card p-4 border-0 shadow-sm text-center">
-            <i class="bi bi-person-workspace fs-1 text-primary"></i>
-            <h5 class="fw-bold mt-3">Gestionar Médicos</h5>
-            <a href="{{ url_for('lista_medicos') }}" class="btn btn-primary btn-sm mt-2">Ver Lista</a>
-        </div>
+    <div class="col-12 mb-4">
+        <h2 class="fw-bold">Panel de Control: {{ session.get('rol')|upper }}</h2>
+        <hr>
     </div>
-    {% endif %}
 
-    <div class="col-md-4 mb-4">
-        <div class="card p-4 border-0 shadow-sm text-center">
-            <i class="bi bi-people-fill fs-1 text-info"></i>
-            <h5 class="fw-bold mt-3">Pacientes</h5>
-            <a href="{{ url_for('pacientes') }}" class="btn btn-info btn-sm text-white mt-2">Ver Lista</a>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm border-0 text-center p-3">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Pacientes</h5>
+                <p class="text-muted small">Gestionar lista y datos de pacientes.</p>
+                <a href="{{ url_for('pacientes') }}" class="btn btn-primary w-100">Ver Pacientes</a>
+            </div>
         </div>
     </div>
 
-    {% if session['rol'] == 'admin' %}
-    <div class="col-md-4 mb-4">
-        <div class="card p-4 border-0 shadow-sm text-center bg-light">
-            <i class="bi bi-file-earmark-pdf fs-1 text-danger"></i>
-            <h5 class="fw-bold mt-3">Reporte de Pacientes</h5>
-            <a href="{{ url_for('reporte_lista', tipo='pacientes') }}" class="btn btn-outline-danger btn-sm mt-2">Imprimir Todo</a>
+    {% if session.get('rol') == 'admin' %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm border-0 text-center p-3">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Médicos</h5>
+                <p class="text-muted small">Controlar personal médico registrado.</p>
+                <a href="{{ url_for('lista_medicos') }}" class="btn btn-info w-100 text-white">Gestionar Médicos</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm border-0 text-center p-3 border-danger">
+            <div class="card-body">
+                <h5 class="card-title fw-bold text-danger">Reportes PDF</h5>
+                <p class="text-muted small">Descargar reportes generales del sistema.</p>
+                <a href="{{ url_for('reporte_lista', tipo='pacientes') }}" class="btn btn-outline-danger w-100 mb-2">PDF Pacientes</a>
+                <a href="{{ url_for('reporte_lista', tipo='medicos') }}" class="btn btn-outline-dark w-100">PDF Médicos</a>
+            </div>
         </div>
     </div>
     {% endif %}

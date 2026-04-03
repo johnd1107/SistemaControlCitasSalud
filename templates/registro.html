@@ -1,18 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light d-flex align-items-center" style="height: 100vh;">
-    <div class="container card shadow p-4" style="max-width: 400px;">
-        <h3 class="text-center">Registro de Médico</h3>
-        <form method="POST">
-            <input type="text" name="cedula" class="form-control mb-2" placeholder="Cédula" required>
-            <input type="text" name="nombre" class="form-control mb-2" placeholder="Nombre Completo" required>
-            <input type="password" name="password" class="form-control mb-3" placeholder="Contraseña" required>
-            <button class="btn btn-primary w-100">Registrar y Salir</button>
-        </form>
-        <a href="{{ url_for('login') }}" class="d-block text-center mt-2 small">Regresar al Login</a>
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-body p-4">
+                <h3 class="text-center fw-bold text-success mb-3">Registro de Médico</h3>
+                <form action="{{ url_for('registro') }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Cédula de Identidad *</label>
+                        <input type="text" name="cedula" class="form-control" required placeholder="Ej: 1700000000">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Nombre Completo *</label>
+                        <input type="text" name="nombre" class="form-control" required placeholder="Ej: Dr. Wilson Prado">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Especialidad *</label>
+                        <select name="especialidad" class="form-select" required>
+                            <option value="" disabled selected>Seleccione Especialidad</option>
+                            <option value="Medicina General">Medicina General</option>
+                            <option value="Pediatría">Pediatría</option>
+                            <option value="Traumatología">Traumatología</option>
+                            <option value="Medicina Familiar">Medicina Familiar</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Contraseña de Acceso *</label>
+                        <input type="password" name="password" class="form-control" required minlength="4">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 btn-lg shadow">Completar Registro</button>
+                </form>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('login') }}" class="text-muted small text-decoration-none">← Volver al Login</a>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,35 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-    <div class="col-md-5">
-        <div class="card shadow border-0 p-4 mb-4">
-            <h4 class="text-info fw-bold">Nueva Consulta</h4>
-            <p class="small text-muted">Atendiendo a: <strong>{{ paciente.nombre_p }}</strong></p>
-            <hr>
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label small">Diagnóstico Médico</label>
-                    <textarea name="diag" class="form-control" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small">Receta / Tratamiento</label>
-                    <textarea name="rece" class="form-control" rows="3" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-info text-white w-100">Guardar Consulta</button>
-            </form>
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card p-4 shadow-sm border-0 bg-light">
+                <h4 class="text-primary">Nueva Atención: {{ paciente.nombre_p }}</h4>
+                <form method="POST">
+                    <textarea name="diag" class="form-control mb-3" placeholder="Diagnóstico médico..." rows="4" required></textarea>
+                    <textarea name="rece" class="form-control mb-3" placeholder="Receta y dosis..." rows="4" required></textarea>
+                    <button type="submit" class="btn btn-primary w-100">Guardar Consulta</button>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="col-md-7">
-        <div class="card shadow border-0 p-4">
-            <h4 class="fw-bold mb-4">Línea de Tiempo del Paciente</h4>
+        <div class="col-md-7">
+            <h4 class="fw-bold">Historial Clínico</h4>
             {% for e in entradas %}
-            <div class="border-start border-info border-4 ps-3 mb-4 bg-light p-2 rounded">
+            <div class="card mb-3 p-3 border-start border-primary border-4">
                 <div class="d-flex justify-content-between">
-                    <span class="badge bg-info">{{ e.fecha }}</span>
-                    <small class="text-secondary">Dr. {{ e.med }}</small>
+                    <small class="text-muted">{{ e.fecha }}</small>
+                    <span class="badge bg-info text-dark">Atendido por: {{ e.med }}</span>
                 </div>
-                <p class="mt-2 mb-1"><strong>Dx:</strong> {{ e.diagnostico }}</p>
-                <p class="mb-0 text-muted small"><strong>Rx:</strong> {{ e.receta }}</p>
+                <p class="mt-2"><strong>Diagnóstico:</strong> {{ e.diagnostico }}</p>
+                <p class="mb-0 text-secondary"><strong>Receta:</strong> {{ e.receta }}</p>
             </div>
             {% endfor %}
         </div>
