@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket de Turno</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; width: 300px; padding: 20px; border: 1px solid #000; text-align: center; }
+        .logo { font-weight: bold; font-size: 20px; }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="logo">SALUD+</div>
+    <p>PEDRO MONCAYO - ECUADOR</p>
+    <hr>
+    <h3>TURNO DE CITA</h3>
+    <p><strong>Paciente:</strong> {{ d.paciente }}</p>
+    <p><strong>Médico:</strong> {{ d.medico }}</p>
+    <p><strong>Especialidad:</strong> {{ d.especialidad }}</p>
+    <p><strong>Fecha:</strong> {{ d.fecha }}</p>
+    <p><strong>Hora:</strong> {{ d.hora }}</p>
+    <hr>
+    <p>Por favor llegue 15 min antes.</p>
+</body>
+</html>

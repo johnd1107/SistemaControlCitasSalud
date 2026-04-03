@@ -7,7 +7,7 @@ def obtener_conexion():
 
 def inicializar_db():
     db = obtener_conexion()
-    # Tabla de Usuarios (Admin, Médicos, Pacientes)
+    # Usuarios: Admin, Médico, Paciente
     db.execute("""CREATE TABLE IF NOT EXISTS usuarios (
         id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
         cedula TEXT UNIQUE NOT NULL,
@@ -18,7 +18,7 @@ def inicializar_db():
         edad INTEGER,
         domicilio TEXT
     )""")
-    # Tabla de Citas
+    # Citas
     db.execute("""CREATE TABLE IF NOT EXISTS citas (
         id_cita INTEGER PRIMARY KEY AUTOINCREMENT,
         id_paciente INTEGER NOT NULL,
@@ -28,13 +28,13 @@ def inicializar_db():
         hora TEXT NOT NULL,
         estado TEXT DEFAULT 'Pendiente'
     )""")
-    # NUEVA: Tabla de Consultas (Diagnóstico y Receta)
+    # Historial Clínico (Consultas)
     db.execute("""CREATE TABLE IF NOT EXISTS consultas (
         id_consulta INTEGER PRIMARY KEY AUTOINCREMENT,
         id_cita INTEGER NOT NULL,
         diagnostico TEXT,
         receta TEXT,
-        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        fecha_atencion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(id_cita) REFERENCES citas(id_cita)
     )""")
     db.commit()
