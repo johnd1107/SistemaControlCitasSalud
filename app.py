@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
 from conexion.conexion import obtener_conexion, inicializar_db
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4, A5
+from reportlab.lib.pagesizes import A4
 from io import BytesIO
 
 app = Flask(__name__)
-app.secret_key = 'saludplus_final_2026'
+app.secret_key = 'saludplus_final_fix_2026'
 
-# Crear tablas si no existen
+# Inicializar Base de Datos (Crea tablas si no existen)
 inicializar_db()
 
 
@@ -21,16 +21,15 @@ def index():
 def login():
     if request.method == 'POST':
         ced, pw = request.form['cedula'], request.form['password']
-        # Acceso Admin
         if ced == 'admin' and pw == '1234':
             session.update({'user_id': 0, 'nombre': 'Administrador', 'rol': 'admin'})
             return redirect(url_for('index'))
 
         db = obtener_conexion()
-        user = db.execute("SELECT * FROM usuarios WHERE cedula=? AND password=?", (ced, pw)).fetchone()
+        u = db.execute("SELECT * FROM usuarios WHERE cedula=? AND password=?", (ced, pw)).fetchone()
         db.close()
-        if user:
-            session.update({'user_id': user['id_usuario'], 'nombre': user['nombre'], 'rol': user['rol']})
+        if u:
+            session.update({'user_id': u['id_usuario'], 'nombre': u['nombre'], 'rol': u['rol']})
             return redirect(url_for('index'))
         flash("Credenciales incorrectas", "danger")
     return render_template('login.html')
@@ -44,10 +43,9 @@ def registro():
             db.execute("INSERT INTO usuarios (cedula, nombre, password, rol) VALUES (?,?,?,'medico')",
                        (request.form['cedula'], request.form['nombre'], request.form['password']))
             db.commit()
-            flash("Médico registrado exitosamente", "success")
             return redirect(url_for('login'))
         except:
-            flash("Error: Cédula ya existe", "danger")
+            flash("Cédula ya registrada", "danger")
         finally:
             db.close()
     return render_template('registro.html')
@@ -66,13 +64,23 @@ def pacientes():
     return render_template('pacientes.html', pacientes=lista)
 
 
-@app.route('/eliminar_paciente/<int:id_p>')
-def eliminar_paciente(id_p):
-    if session.get('rol') != 'admin': return redirect(url_for('index'))
+@app.route('/editar_paciente/<int:id>', methods=['POST'])
+def editar_paciente(id):
     db = obtener_conexion()
-    db.execute("DELETE FROM pacientes WHERE id_paciente=?", (id_p,))
+    db.execute("UPDATE pacientes SET cedula_p=?, nombre_p=?, telefono=? WHERE id_paciente=?",
+               (request.form['ced'], request.form['nom'], request.form['tel'], id))
     db.commit()
     db.close()
+    return redirect(url_for('pacientes'))
+
+
+@app.route('/eliminar_paciente/<int:id>')
+def eliminar_paciente(id):
+    if session.get('rol') == 'admin':
+        db = obtener_conexion()
+        db.execute("DELETE FROM pacientes WHERE id_paciente=?", (id,))
+        db.commit()
+        db.close()
     return redirect(url_for('pacientes'))
 
 
@@ -84,40 +92,42 @@ def historial(id_p):
         db.execute("INSERT INTO historial (id_paciente, id_medico, diagnostico, receta) VALUES (?,?,?,?)",
                    (id_p, session['user_id'], request.form['diag'], request.form['rece']))
         db.commit()
-    paciente = db.execute("SELECT * FROM pacientes WHERE id_paciente=?", (id_p,)).fetchone()
-    entradas = db.execute(
-        "SELECT h.*, u.nombre as med FROM historial h JOIN usuarios u ON h.id_medico = u.id_usuario WHERE h.id_paciente=? ORDER BY fecha DESC",
-        (id_p,)).fetchall()
+
+    p = db.execute("SELECT * FROM pacientes WHERE id_paciente=?", (id_p,)).fetchone()
+    h = db.execute("""SELECT h.*, u.nombre as med FROM historial h 
+                      JOIN usuarios u ON h.id_medico=u.id_usuario 
+                      WHERE h.id_paciente=? ORDER BY fecha DESC""", (id_p,)).fetchall()
     db.close()
-    return render_template('historial.html', paciente=paciente, entradas=entradas)
+    return render_template('historial.html', paciente=p, entradas=h)
 
 
+# --- RUTAS DE ADMINISTRADOR (SOLUCIONAN EL BUILDERROR) ---
 @app.route('/medicos')
-def lista_medicos():
+def lista_medicos():  # Nombre exacto que pide tu dashboard
     if session.get('rol') != 'admin': return redirect(url_for('index'))
     db = obtener_conexion()
-    medicos = db.execute("SELECT * FROM usuarios WHERE rol='medico'").fetchall()
+    lista = db.execute("SELECT * FROM usuarios WHERE rol='medico'").fetchall()
     db.close()
-    return render_template('medicos.html', medicos=medicos)
+    return render_template('medicos.html', medicos=lista)
 
 
-@app.route('/imprimir_reporte/<string:tipo>')
-def imprimir_reporte(tipo):
+@app.route('/imprimir/<tipo>')  # Nombre exacto que pide tu pacientes.html
+def imprimir(tipo):
     db = obtener_conexion()
     buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
-    p.drawString(100, 800, f"REPORTE DE {tipo.upper()}")
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    pdf.drawString(100, 800, f"REPORTE DE {tipo.upper()}")
     y = 750
-    data = db.execute("SELECT * FROM pacientes").fetchall() if tipo == 'pacientes' else db.execute(
-        "SELECT * FROM usuarios WHERE rol='medico'").fetchall()
-    for i in data:
-        p.drawString(100, y, f"- {i[1]} | {i[2]}")
+    items = db.execute("SELECT * FROM pacientes").fetchall() if tipo == 'pacientes' else db.execute(
+        "SELECT * FROM usuarios").fetchall()
+    for i in items:
+        pdf.drawString(100, y, f"- {i[1]} | {i[2]}")
         y -= 20
-    p.showPage();
-    p.save();
+    pdf.showPage();
+    pdf.save();
     db.close();
     buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name=f"Reporte_{tipo}.pdf")
+    return send_file(buffer, as_attachment=True, download_name=f"reporte_{tipo}.pdf")
 
 
 @app.route('/logout')

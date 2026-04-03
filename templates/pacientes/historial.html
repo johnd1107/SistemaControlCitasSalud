@@ -1,35 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="card shadow border-0 p-4 mb-4">
-            <h5 class="fw-bold text-info">Datos del Paciente</h5>
+            <h4 class="text-info fw-bold">Nueva Consulta</h4>
+            <p class="small text-muted">Atendiendo a: <strong>{{ paciente.nombre_p }}</strong></p>
             <hr>
-            <p><strong>Nombre:</strong> {{ paciente.nombre_p }}</p>
-            <p><strong>Cédula:</strong> {{ paciente.cedula_p }}</p>
-        </div>
-
-        <div class="card shadow border-0 p-4">
-            <h5 class="fw-bold text-success">Nueva Consulta</h5>
-            <form action="{{ url_for('historial', id_p=paciente.id_paciente) }}" method="POST">
-                <textarea name="diag" class="form-control mb-3" placeholder="Diagnóstico médico..." rows="4" required></textarea>
-                <textarea name="rece" class="form-control mb-3" placeholder="Receta médica..." rows="3" required></textarea>
-                <button type="submit" class="btn btn-success w-100">Guardar Consulta</button>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label small">Diagnóstico Médico</label>
+                    <textarea name="diag" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Receta / Tratamiento</label>
+                    <textarea name="rece" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-info text-white w-100">Guardar Consulta</button>
             </form>
         </div>
     </div>
-
-    <div class="col-md-8">
+    <div class="col-md-7">
         <div class="card shadow border-0 p-4">
-            <h5 class="fw-bold">Historial de Consultas</h5>
+            <h4 class="fw-bold mb-4">Línea de Tiempo del Paciente</h4>
             {% for e in entradas %}
-            <div class="border-start border-info border-4 ps-3 mb-4">
-                <span class="badge bg-info text-white">{{ e.fecha }}</span>
-                <p class="mb-1 mt-2"><strong>Diagnóstico:</strong> {{ e.diagnostico }}</p>
-                <p class="text-muted small"><strong>Receta:</strong> {{ e.receta }}</p>
-                <p class="small text-secondary">Atendido por: Dr. {{ e.med }}</p>
+            <div class="border-start border-info border-4 ps-3 mb-4 bg-light p-2 rounded">
+                <div class="d-flex justify-content-between">
+                    <span class="badge bg-info">{{ e.fecha }}</span>
+                    <small class="text-secondary">Dr. {{ e.med }}</small>
+                </div>
+                <p class="mt-2 mb-1"><strong>Dx:</strong> {{ e.diagnostico }}</p>
+                <p class="mb-0 text-muted small"><strong>Rx:</strong> {{ e.receta }}</p>
             </div>
-            <hr>
             {% endfor %}
         </div>
     </div>

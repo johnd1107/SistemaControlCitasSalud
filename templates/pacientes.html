@@ -1,35 +1,44 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="card shadow border-0 p-4">
-    <div class="d-flex justify-content-between mb-4">
-        <h3><i class="bi bi-people text-info"></i> Listado de Pacientes</h3>
+    <div class="d-flex justify-content-between mb-4 align-items-center">
+        <h3 class="fw-bold text-info"><i class="bi bi-people"></i> Panel de Pacientes</h3>
         <div>
-            <button class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#addP">Añadir Paciente</button>
-            <a href="{{ url_for('imprimir_reporte', tipo='pacientes') }}" class="btn btn-danger">Imprimir PDF</a>
+            <button class="btn btn-info text-white shadow-sm" data-bs-toggle="modal" data-bs-target="#addP">Nuevo Paciente</button>
+            <a href="{{ url_for('imprimir', tipo='pacientes') }}" class="btn btn-danger shadow-sm">PDF General</a>
         </div>
     </div>
-    <table class="table align-middle">
-        <thead>
-            <tr>
-                <th>Cédula</th>
-                <th>Nombre</th>
-                <th>Teléfono</th>
-                <th>Acciones</th>
-            </tr>
+
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr><th>Cédula</th><th>Nombre</th><th>Acciones</th></tr>
         </thead>
         <tbody>
             {% for p in pacientes %}
             <tr>
                 <td>{{ p.cedula_p }}</td>
-                <td>{{ p.nombre_p }}</td>
-                <td>{{ p.telefono }}</td>
+                <td class="fw-bold">{{ p.nombre_p }}</td>
                 <td>
-                    <a href="{{ url_for('historial', id_p=p.id_paciente) }}" class="btn btn-sm btn-outline-info">Historial</a>
+                    <a href="{{ url_for('historial', id_p=p.id_paciente) }}" class="btn btn-sm btn-outline-primary rounded-pill">Historial / Receta</a>
+                    <button class="btn btn-sm btn-outline-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#edit{{p.id_paciente}}">Editar</button>
                     {% if session['rol'] == 'admin' %}
-                    <a href="{{ url_for('eliminar_paciente', id_p=p.id_paciente) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
+                    <a href="{{ url_for('eliminar_paciente', id_p=p.id_paciente) }}" class="btn btn-sm btn-outline-danger rounded-pill" onclick="return confirm('¿Eliminar?')">Borrar</a>
                     {% endif %}
                 </td>
             </tr>
+
+            <div class="modal fade" id="edit{{p.id_paciente}}" tabindex="-1">
+                <div class="modal-dialog">
+                    <form action="{{ url_for('editar_paciente', id=p.id_paciente) }}" method="POST" class="modal-content">
+                        <div class="modal-body">
+                            <input type="text" name="ced" class="form-control mb-2" value="{{p.cedula_p}}">
+                            <input type="text" name="nom" class="form-control mb-2" value="{{p.nombre_p}}">
+                            <input type="text" name="tel" class="form-control" value="{{p.telefono}}">
+                        </div>
+                        <div class="modal-footer border-0"><button class="btn btn-info text-white w-100">Actualizar</button></div>
+                    </form>
+                </div>
+            </div>
             {% endfor %}
         </tbody>
     </table>
@@ -38,12 +47,13 @@
 <div class="modal fade" id="addP" tabindex="-1">
     <div class="modal-dialog">
         <form action="{{ url_for('pacientes') }}" method="POST" class="modal-content">
+            <div class="modal-header border-0"><h5>Registrar Nuevo Paciente</h5></div>
             <div class="modal-body">
                 <input type="text" name="ced" class="form-control mb-2" placeholder="Cédula" required>
-                <input type="text" name="nom" class="form-control mb-2" placeholder="Nombre" required>
+                <input type="text" name="nom" class="form-control mb-2" placeholder="Nombre Completo" required>
                 <input type="text" name="tel" class="form-control" placeholder="Teléfono" required>
             </div>
-            <div class="modal-footer"><button type="submit" class="btn btn-info text-white">Guardar</button></div>
+            <div class="modal-footer border-0"><button class="btn btn-info text-white w-100">Guardar</button></div>
         </form>
     </div>
 </div>

@@ -7,7 +7,7 @@ def obtener_conexion():
 
 def inicializar_db():
     db = obtener_conexion()
-    # Tabla de Usuarios
+    # Tabla Usuarios: Diferencia entre Admin y Médicos
     db.execute("""
         CREATE TABLE IF NOT EXISTS usuarios (
             id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +17,7 @@ def inicializar_db():
             rol TEXT
         )
     """)
-    # Tabla de Pacientes
+    # Tabla Pacientes
     db.execute("""
         CREATE TABLE IF NOT EXISTS pacientes (
             id_paciente INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,7 +26,7 @@ def inicializar_db():
             telefono TEXT
         )
     """)
-    # Tabla de Historial
+    # Tabla Historial: Relaciona Paciente, Médico, Diagnóstico y Receta
     db.execute("""
         CREATE TABLE IF NOT EXISTS historial (
             id_h INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +34,9 @@ def inicializar_db():
             id_medico INTEGER,
             diagnostico TEXT,
             receta TEXT,
-            fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(id_paciente) REFERENCES pacientes(id_paciente),
+            FOREIGN KEY(id_medico) REFERENCES usuarios(id_usuario)
         )
     """)
     db.commit()
