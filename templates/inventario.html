@@ -1,39 +1,26 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<div class="card">
-    <h2>Gestión de Inventario Médico</h2>
-    
-    <form action="/inventario/agregar" method="POST" style="margin-bottom: 20px; display: flex; gap: 10px;">
-        <input type="text" name="nombre" placeholder="Producto" required>
-        <input type="text" name="categoria" placeholder="Categoría">
-        <input type="number" name="cantidad" placeholder="Cant." required>
-        <input type="number" step="0.01" name="precio" placeholder="Precio" required>
-        <button type="submit" style="background: var(--success); color: white; border:none; padding: 5px 15px; border-radius: 5px;">Añadir</button>
-    </form>
-
-    <table class="styled-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Stock</th>
-                <th>Precio</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for id, p in lista.items() %}
-            <tr>
-                <td>{{ id }}</td>
-                <td><strong>{{ p.nombre }}</strong></td>
-                <td>{{ p.categoria }}</td>
-                <td>{{ p.cantidad }}</td>
-                <td>${{ p.precio }}</td>
-                <td><a href="/inventario/eliminar/{{ id }}" style="color: red;">Eliminar</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card shadow">
+    <div class="card-header bg-success text-white d-flex justify-content-between">
+        <h2>📦 Inventario de Farmacia</h2>
+        <button class="btn btn-light btn-sm">+ Agregar Producto</button>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Medicamento</th>
+                    <th>Stock</th>
+                    <th>Precio Unitario</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>001</td><td>Paracetamol 500mg</td><td>50</td><td>$0.25</td></tr>
+                <tr><td>002</td><td>Ibuprofeno 400mg</td><td>30</td><td>$0.40</td></tr>
+                <tr><td>003</td><td>Amoxicilina 500mg</td><td>15</td><td>$1.20</td></tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center mb-4">
+        <h2 class="fw-bold">Bienvenido al Panel de Control</h2>
+        <p class="text-muted">Sistema Integral SaludPlus v2.0</p>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0 border-start border-5 border-info p-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-people-fill fs-1 text-info me-3"></i>
+                <div>
+                    <h5 class="m-0 fw-bold">Pacientes</h5>
+                    <a href="{{ url_for('pacientes') }}" class="small text-decoration-none">Gestionar registros</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0 border-start border-5 border-primary p-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-file-earmark-medical fs-1 text-primary me-3"></i>
+                <div>
+                    <h5 class="m-0 fw-bold">Historiales</h5>
+                    <p class="small m-0 text-muted">Consultas y recetas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0 border-start border-5 border-dark p-3">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-shield-check fs-1 text-dark me-3"></i>
+                <div>
+                    <h5 class="m-0 fw-bold">Estado Base de Datos</h5>
+                    <span class="badge bg-success">Conexión Activa</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="bg-dark text-white p-4 rounded-3 shadow text-center">
+            <h4 class="m-0"><i class="bi bi-lock-fill text-info"></i> SALUDPLUS: Tu seguridad nos importa</h4>
+        </div>
+    </div>
+</div>
+{% endblock %}

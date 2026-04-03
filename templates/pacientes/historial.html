@@ -1,39 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="mb-4">
-    <a href="/" class="btn btn-outline-secondary btn-sm">← Volver</a>
-    <h2 class="mt-2">Historial Clínico: {{ p.nombre }} {{ p.apellido }}</h2>
-</div>
-
 <div class="row">
     <div class="col-md-4">
-        <div class="card p-3 mb-4 bg-light">
-            <h5>Datos Generales</h5>
-            <p><strong>CI:</strong> {{ p.cedula }}</p>
-            <p><strong>Email:</strong> {{ p.email }}</p>
-            <button class="btn btn-primary w-100">Nueva Consulta</button>
+        <div class="card p-4 shadow border-info border-start border-5">
+            <h5 class="fw-bold">Nueva Consulta</h5>
+            <form method="POST">
+                <textarea name="diag" class="form-control mb-2" placeholder="Diagnóstico" required></textarea>
+                <textarea name="rece" class="form-control mb-2" placeholder="Medicación"></textarea>
+                <button type="submit" class="btn btn-primary w-100">Guardar Consulta</button>
+            </form>
         </div>
     </div>
-    
     <div class="col-md-8">
-        <h4>Consultas Recientes</h4>
-        {% if historial %}
-            {% for h in historial %}
-            <div class="card mb-3">
-                <div class="card-body history-line">
-                    <div class="d-flex justify-content-between">
-                        <h6 class="text-primary">{{ h.fecha }}</h6>
-                        <span class="badge bg-success">Atendido por: {{ h.nombre_medico }}</span>
-                    </div>
-                    <p class="mt-2"><strong>Diagnóstico:</strong> {{ h.diagnostico }}</p>
-                    <p class="text-muted small">{{ h.observaciones }}</p>
-                    <a href="/imprimir-receta/{{ h.id_historial }}" class="btn btn-outline-danger btn-sm">💊 Descargar Receta (PDF)</a>
-                </div>
+        <h5 class="fw-bold">Historial de {{ paciente.nombre_p }}</h5>
+        {% for h in entradas %}
+        <div class="card mb-2 p-3 border-0 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-secondary">{{ h.fecha }}</span>
+                <a href="{{ url_for('imprimir', id_h=h.id_h) }}" class="btn btn-sm btn-danger">
+                    <i class="bi bi-printer"></i> Imprimir PDF
+                </a>
             </div>
-            {% endfor %}
-        {% else %}
-            <div class="alert alert-warning">No hay registros clínicos previos.</div>
-        {% endif %}
+            <p class="mt-2 mb-0"><strong>Diagnóstico:</strong> {{ h.diagnostico }}</p>
+            <small class="text-muted">{{ h.receta }}</small>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
