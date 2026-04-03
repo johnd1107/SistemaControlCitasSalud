@@ -1,37 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-sm border-0 border-start border-5 border-info p-4">
-            <h5 class="fw-bold"><i class="bi bi-clipboard-plus"></i> Nueva Atención</h5>
-            <form method="POST">
-                <textarea name="diag" class="form-control mb-3 bg-light" placeholder="Diagnóstico" rows="3" required></textarea>
-                <textarea name="rece" class="form-control mb-3 bg-light" placeholder="Medicamentos" rows="4" required></textarea>
-                <div class="alert alert-info py-2 small">Costo consulta: <strong>$20.00</strong></div>
-                <button type="submit" class="btn btn-primary w-100 fw-bold">Guardar Consulta</button>
+    <div class="col-md-4">
+        <div class="card shadow border-0 p-4 mb-4">
+            <h5 class="fw-bold text-info">Datos del Paciente</h5>
+            <hr>
+            <p><strong>Nombre:</strong> {{ paciente.nombre_p }}</p>
+            <p><strong>Cédula:</strong> {{ paciente.cedula_p }}</p>
+        </div>
+
+        <div class="card shadow border-0 p-4">
+            <h5 class="fw-bold text-success">Nueva Consulta</h5>
+            <form action="{{ url_for('historial', id_p=paciente.id_paciente) }}" method="POST">
+                <textarea name="diag" class="form-control mb-3" placeholder="Diagnóstico médico..." rows="4" required></textarea>
+                <textarea name="rece" class="form-control mb-3" placeholder="Receta médica..." rows="3" required></textarea>
+                <button type="submit" class="btn btn-success w-100">Guardar Consulta</button>
             </form>
         </div>
     </div>
 
     <div class="col-md-8">
-        <div class="card shadow-sm border-0 p-4">
-            <h5 class="fw-bold mb-4">Historial de {{ paciente.nombre_p }}</h5>
-            {% for h in entradas %}
-            <div class="card mb-3 border-0 bg-light p-3">
-                <div class="d-flex justify-content-between">
-                    <small class="text-info fw-bold">{{ h.fecha }} | Dr. {{ h.medico_nom }}</small>
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown">Imprimir</button>
-                        <ul class="dropdown-menu shadow">
-                            <li><a class="dropdown-item" href="{{ url_for('imprimir_receta', id_h=h.id_h) }}">Receta</a></li>
-                            <li><a class="dropdown-item text-success fw-bold" href="{{ url_for('imprimir_factura', id_h=h.id_h) }}">Factura $20</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <hr class="my-2">
-                <p class="mb-1"><strong>Diagnóstico:</strong> {{ h.diagnostico }}</p>
-                <p class="mb-0 text-muted small"><strong>Plan:</strong> {{ h.receta }}</p>
+        <div class="card shadow border-0 p-4">
+            <h5 class="fw-bold">Historial de Consultas</h5>
+            {% for e in entradas %}
+            <div class="border-start border-info border-4 ps-3 mb-4">
+                <span class="badge bg-info text-white">{{ e.fecha }}</span>
+                <p class="mb-1 mt-2"><strong>Diagnóstico:</strong> {{ e.diagnostico }}</p>
+                <p class="text-muted small"><strong>Receta:</strong> {{ e.receta }}</p>
+                <p class="small text-secondary">Atendido por: Dr. {{ e.med }}</p>
             </div>
+            <hr>
             {% endfor %}
         </div>
     </div>
