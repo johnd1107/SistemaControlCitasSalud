@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 500px;">
+        <h3 class="text-center">Registro de Paciente</h3>
+        <form method="POST">
+            <input type="text" name="ced" placeholder="Cédula" class="form-control mb-2" required>
+            <input type="text" name="nom" placeholder="Nombre completo" class="form-control mb-2" required>
+            <input type="number" name="edad" placeholder="Edad" class="form-control mb-2" required>
+            <input type="text" name="dir" placeholder="Dirección" class="form-control mb-2" required>
+            <button class="btn btn-primary w-100">Registrarse</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

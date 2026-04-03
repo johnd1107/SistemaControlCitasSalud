@@ -1,42 +1,45 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row">
-    <div class="col-12 mb-4">
-        <h2 class="fw-bold">Panel de Control: {{ session.get('rol')|upper }}</h2>
-        <hr>
-    </div>
+<div class="container text-center mt-5">
+    <h1 class="display-4 fw-bold text-primary">SALUD+</h1>
+    <p class="lead">Bienvenido(a), <strong>{{ session['nombre'] }}</strong></p>
+    <hr>
 
-    <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm border-0 text-center p-3">
-            <div class="card-body">
-                <h5 class="card-title fw-bold">Pacientes</h5>
-                <p class="text-muted small">Gestionar lista y datos de pacientes.</p>
-                <a href="{{ url_for('pacientes') }}" class="btn btn-primary w-100">Ver Pacientes</a>
+    <div class="row justify-content-center g-4 mt-3">
+        {% if session['rol'] == 'admin' %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-people-fill display-4 text-primary"></i>
+                        <h4 class="mt-3">Control Total</h4>
+                        <p class="text-muted small">Gestionar médicos y pacientes.</p>
+                        <a href="/admin/usuarios" class="btn btn-primary w-100">Administrar Cuentas</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    {% if session.get('rol') == 'admin' %}
-    <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm border-0 text-center p-3">
-            <div class="card-body">
-                <h5 class="card-title fw-bold">Médicos</h5>
-                <p class="text-muted small">Controlar personal médico registrado.</p>
-                <a href="{{ url_for('lista_medicos') }}" class="btn btn-info w-100 text-white">Gestionar Médicos</a>
+        {% elif session['rol'] == 'medico' %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-heart-pulse-fill display-4 text-danger"></i>
+                        <h4 class="mt-3">Atención Médica</h4>
+                        <p class="text-muted small">Ver lista de pacientes pendientes.</p>
+                        <a href="/admin/usuarios" class="btn btn-danger w-100">Ver Pacientes</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm border-0 text-center p-3 border-danger">
-            <div class="card-body">
-                <h5 class="card-title fw-bold text-danger">Reportes PDF</h5>
-                <p class="text-muted small">Descargar reportes generales del sistema.</p>
-                <a href="{{ url_for('reporte_lista', tipo='pacientes') }}" class="btn btn-outline-danger w-100 mb-2">PDF Pacientes</a>
-                <a href="{{ url_for('reporte_lista', tipo='medicos') }}" class="btn btn-outline-dark w-100">PDF Médicos</a>
+        {% else %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-start border-success border-4">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-check display-4 text-success"></i>
+                        <h4 class="mt-3">Agendar Cita</h4>
+                        <p class="text-muted small">Reserva tu turno médico.</p>
+                        <a href="/agendar" class="btn btn-success w-100">Pedir Turno</a>
+                    </div>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 {% endblock %}

@@ -2,23 +2,21 @@
 {% block content %}
 <div class="row justify-content-center mt-5">
     <div class="col-md-4">
-        <div class="card shadow-lg border-0">
-            <div class="card-body p-4">
-                <h3 class="text-center fw-bold text-primary mb-4">Iniciar Sesión</h3>
-                <form action="{{ url_for('login') }}" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Cédula o Usuario</label>
-                        <input type="text" name="cedula" class="form-control form-control-lg" placeholder="admin / cédula" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold">Contraseña</label>
-                        <input type="password" name="password" class="form-control form-control-lg" placeholder="****" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 btn-lg shadow">Entrar al Sistema</button>
-                </form>
-                <div class="text-center mt-4">
-                    <p class="text-muted small">¿Eres médico nuevo? <a href="{{ url_for('registro') }}" class="text-decoration-none">Regístrate aquí</a></p>
+        <div class="card shadow border-0 p-4">
+            <h2 class="text-center fw-bold">SALUD+</h2>
+            <form action="/login" method="POST" class="mt-4">
+                <div class="mb-3">
+                    <label>Cédula</label>
+                    <input type="text" name="cedula" class="form-control" required>
                 </div>
+                <div class="mb-3">
+                    <label>Contraseña</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+            <div class="text-center mt-3">
+                <p class="small">¿Eres paciente nuevo? <a href="{{ url_for('registro_paciente') }}">Regístrate aquí</a></p>
             </div>
         </div>
     </div>

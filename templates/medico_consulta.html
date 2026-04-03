@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg border-0" id="ticket">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Atención: {{ paciente.nombre }}</h4>
+            <small>ID: {{ paciente.cedula }}</small>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="fw-bold">Diagnóstico Clínico:</label>
+                    <textarea name="diag" id="diag" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">Receta y Medicación:</label>
+                    <textarea name="rece" id="rece" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="no-print">
+                    <button type="submit" class="btn btn-success">Guardar en Historial</button>
+                    <button type="button" onclick="imprimirReceta()" class="btn btn-info">Imprimir Receta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function imprimirReceta() {
+    const diag = document.getElementById('diag').value;
+    const rece = document.getElementById('rece').value;
+    const ventana = window.open('', '_blank');
+    ventana.document.write(`
+        <html>
+            <head><title>Receta Médica - SALUD+</title></head>
+            <body style="font-family: Arial; padding: 40px;">
+                <h1 style="text-align:center; color:#007bff;">SALUD+</h1>
+                <hr>
+                <p><strong>Paciente:</strong> {{ paciente.nombre }}</p>
+                <p><strong>Cédula:</strong> {{ paciente.cedula }}</p>
+                <p><strong>Fecha:</strong> ${new Date().toLocaleDateString()}</p>
+                <hr>
+                <h3>Diagnóstico:</h3>
+                <p>${diag}</p>
+                <h3>Receta / Indicaciones:</h3>
+                <p>${rece}</p>
+                <br><br>
+                <p style="text-align:center;">_______________________<br>Firma del Médico</p>
+            </body>
+        </html>
+    `);
+    ventana.document.close();
+    ventana.print();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow border-0 p-4">
+        <h3 class="text-primary fw-bold mb-4">Reservar Turno Médico</h3>
+        <form action="/agendar" method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Médico Disponible</label>
+                    <select name="id_medico" class="form-select" required>
+                        {% for m in medicos %}
+                        <option value="{{ m.id_usuario }}">{{ m.nombre }} ({{ m.especialidad }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Especialidad Requerida</label>
+                    <input type="text" name="especialidad" class="form-control" placeholder="Ej: Pediatría" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" name="fecha" class="form-control" min="{{ hoy }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Hora</label>
+                    <input type="time" name="hora" class="form-control" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success w-100 mt-3">Confirmar Cita</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
