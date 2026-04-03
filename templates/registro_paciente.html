@@ -1,42 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
-    <div class="card shadow-lg border-0 p-4" style="width: 480px; border-radius: 20px;">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary">Registro de Paciente</h2>
-            <p class="text-muted small">Crea tu acceso al sistema Salud+</p>
-        </div>
-
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-lg border-0 p-4" style="width: 450px; border-radius: 15px;">
+        <h2 class="text-center fw-bold text-primary mb-4">Registro de Paciente</h2>
         <form action="/registro_paciente" method="POST">
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Cédula (10 dígitos)</label>
-                <input type="text" name="ced" class="form-control" placeholder="0000000000" maxlength="10" required>
+            <input type="text" name="ced" class="form-control mb-3" placeholder="Cédula (10 dígitos)" required maxlength="10">
+            <input type="text" name="nom" class="form-control mb-3" placeholder="Nombre completo" required>
+            <input type="password" name="pass" class="form-control mb-3" placeholder="Crea tu contraseña" required>
+            <div class="row">
+                <div class="col-4"><input type="number" name="edad" class="form-control mb-3" placeholder="Edad" required></div>
+                <div class="col-8"><input type="text" name="dir" class="form-control mb-3" placeholder="Dirección" required></div>
             </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Nombre Completo</label>
-                <input type="text" name="nom" class="form-control" placeholder="Ej: Juan Pérez" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Contraseña Personalizada</label>
-                <input type="password" name="pass" class="form-control" placeholder="Mínimo 4 caracteres" required>
-            </div>
-            <div class="row mb-4">
-                <div class="col-4">
-                    <label class="form-label small fw-bold">Edad</label>
-                    <input type="number" name="edad" class="form-control" required>
-                </div>
-                <div class="col-8">
-                    <label class="form-label small fw-bold">Dirección</label>
-                    <input type="text" name="dir" class="form-control" placeholder="Ciudad/Barrio" required>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm mb-3">Finalizar Registro</button>
-
+            <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm mb-3">Registrarse</button>
             <div class="text-center">
-                <a href="{{ url_for('login') }}" class="text-decoration-none text-secondary small">
-                    <i class="bi bi-arrow-left"></i> Volver al Inicio
-                </a>
+                <a href="{{ url_for('login') }}" class="text-decoration-none small text-secondary">Volver al Inicio</a>
             </div>
         </form>
     </div>
