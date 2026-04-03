@@ -1,15 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file
 from conexion.conexion import obtener_conexion, inicializar_db
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A5
+from reportlab.lib.pagesizes import A4, A5
 from io import BytesIO
 
 app = Flask(__name__)
-app.secret_key = 'saludplus_ultimate_2026'
+app.secret_key = 'saludplus_2026_final_fix'
 
-# Inicializamos la base de datos al arrancar
+# Inicializamos la DB al cargar
 inicializar_db()
 
+# --- ACCESO Y SEGURIDAD ---
 @app.route('/')
 def index():
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -25,7 +26,7 @@ def login():
         if user:
             session.update({'user_id': user['id_usuario'], 'nombre': user['nombre'], 'rol': user['rol']})
             return redirect(url_for('index'))
-        flash("Credenciales incorrectas. Verifique su cédula y contraseña.", "danger")
+        flash("Cédula o contraseña incorrecta", "danger")
     return render_template('login.html')
 
 @app.route('/registro', methods=['GET', 'POST'])
@@ -34,16 +35,29 @@ def registro():
         ced, nom, pw = request.form['cedula'], request.form['nombre'], request.form['password']
         db = obtener_conexion()
         try:
+            # Por defecto registramos como médico
             db.execute("INSERT INTO usuarios (cedula, nombre, password, rol) VALUES (?, ?, ?, 'medico')", (ced, nom, pw))
             db.commit()
-            flash("¡Usuario registrado exitosamente! Ya puede ingresar.", "success")
+            flash("Registro exitoso. Ya puede iniciar sesión.", "success")
             return redirect(url_for('login'))
         except:
-            flash("Error: La cédula ya existe en el sistema.", "danger")
+            flash("Error: La cédula ya existe.", "danger")
         finally:
             db.close()
     return render_template('registro.html')
 
+# --- VISTA ADMINISTRADOR: LISTA DE MÉDICOS ---
+@app.route('/medicos')
+def lista_medicos():
+    if session.get('rol') != 'admin':
+        flash("Acceso denegado: Se requiere rol de Administrador", "danger")
+        return redirect(url_for('index'))
+    db = obtener_conexion()
+    medicos = db.execute("SELECT * FROM usuarios WHERE rol='medico'").fetchall()
+    db.close()
+    return render_template('medicos.html', medicos=medicos)
+
+# --- GESTIÓN DE PACIENTES ---
 @app.route('/pacientes', methods=['GET', 'POST'])
 def pacientes():
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -52,7 +66,6 @@ def pacientes():
         db.execute("INSERT INTO pacientes (cedula_p, nombre_p, telefono) VALUES (?,?,?)",
                    (request.form['ced'], request.form['nom'], request.form['tel']))
         db.commit()
-        flash("Paciente registrado correctamente", "success")
     lista = db.execute("SELECT * FROM pacientes").fetchall()
     db.close()
     return render_template('pacientes.html', pacientes=lista)
@@ -65,43 +78,59 @@ def historial(id_p):
         db.execute("INSERT INTO historial (id_paciente, id_medico, diagnostico, receta) VALUES (?,?,?,?)",
                    (id_p, session['user_id'], request.form['diag'], request.form['rece']))
         db.commit()
-        flash("Consulta guardada", "info")
     paciente = db.execute("SELECT * FROM pacientes WHERE id_paciente=?", (id_p,)).fetchone()
-    entradas = db.execute("SELECT * FROM historial WHERE id_paciente=? ORDER BY fecha DESC", (id_p,)).fetchall()
+    entradas = db.execute("""
+        SELECT h.*, u.nombre as medico_nom 
+        FROM historial h 
+        JOIN usuarios u ON h.id_medico = u.id_usuario 
+        WHERE h.id_paciente=? ORDER BY fecha DESC""", (id_p,)).fetchall()
     db.close()
     return render_template('historial.html', paciente=paciente, entradas=entradas)
 
-@app.route('/imprimir/<int:id_h>')
-def imprimir(id_h):
+# --- SISTEMA DE IMPRESIÓN (PDF) ---
+@app.route('/imprimir_factura/<int:id_h>')
+def imprimir_factura(id_h):
     db = obtener_conexion()
-    data = db.execute("""SELECT h.*, p.nombre_p, u.nombre as med 
-                         FROM historial h 
-                         JOIN pacientes p ON h.id_paciente=p.id_paciente 
-                         JOIN usuarios u ON h.id_medico=u.id_usuario 
-                         WHERE h.id_h=?""", (id_h,)).fetchone()
+    data = db.execute("""
+        SELECT h.*, p.nombre_p, p.cedula_p FROM historial h 
+        JOIN pacientes p ON h.id_paciente = p.id_paciente WHERE h.id_h = ?""", (id_h,)).fetchone()
     db.close()
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=A5)
     p.setFont("Helvetica-Bold", 14)
-    p.drawCentredString(210, 550, "CENTRO MÉDICO SALUDPLUS")
-    p.line(30, 540, 390, 540)
+    p.drawCentredString(210, 550, "FACTURA - SALUDPLUS")
     p.setFont("Helvetica", 10)
-    p.drawString(50, 500, f"Paciente: {data['nombre_p']}")
-    p.drawString(50, 480, f"Fecha: {data['fecha']}")
-    p.setFont("Helvetica-Bold", 11)
-    p.drawString(50, 450, "DIAGNÓSTICO:")
-    p.setFont("Helvetica", 10)
-    p.drawString(60, 435, data['diagnostico'])
-    p.setFont("Helvetica-Bold", 11)
-    p.drawString(50, 400, "INDICACIONES:")
-    p.setFont("Helvetica", 10)
-    p.drawString(60, 385, data['receta'])
-    p.line(150, 100, 270, 100)
-    p.drawCentredString(210, 85, f"Dr. {data['med']}")
+    p.drawString(50, 500, f"PACIENTE: {data['nombre_p']}")
+    p.drawString(50, 485, f"CI: {data['cedula_p']}")
+    p.line(50, 475, 370, 475)
+    p.drawString(50, 450, "Consulta Médica Especializada")
+    p.drawRightString(370, 450, "$ 20.00")
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(50, 400, "TOTAL CANCELADO: $ 20.00")
     p.showPage()
     p.save()
     buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name="receta.pdf", mimetype='application/pdf')
+    return send_file(buffer, as_attachment=True, download_name="Factura.pdf")
+
+@app.route('/imprimir_receta/<int:id_h>')
+def imprimir_receta(id_h):
+    db = obtener_conexion()
+    data = db.execute("""
+        SELECT h.*, p.nombre_p, u.nombre as med FROM historial h 
+        JOIN pacientes p ON h.id_paciente = p.id_paciente 
+        JOIN usuarios u ON h.id_medico = u.id_usuario WHERE h.id_h = ?""", (id_h,)).fetchone()
+    db.close()
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A5)
+    p.drawString(50, 550, f"PACIENTE: {data['nombre_p']}")
+    p.drawString(50, 530, f"DIAGNÓSTICO: {data['diagnostico']}")
+    p.drawString(50, 500, "RECETA:")
+    p.drawString(60, 485, data['receta'])
+    p.drawCentredString(210, 100, f"Firma: Dr. {data['med']}")
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return send_file(buffer, as_attachment=True, download_name="Receta.pdf")
 
 @app.route('/logout')
 def logout():

@@ -1,58 +1,75 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="row">
-    <div class="col-lg-4">
-        <div class="card p-4 mb-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-person-plus-fill text-info"></i> Nuevo Registro</h5>
-            <form method="POST">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0 p-4">
+            <h4 class="fw-bold mb-4 text-dark">
+                <i class="bi bi-person-plus-fill text-info me-2"></i>Nuevo Registro
+            </h4>
+            <form action="{{ url_for('pacientes') }}" method="POST">
                 <div class="mb-3">
                     <label class="form-label small fw-bold">Cédula del Paciente</label>
-                    <input type="text" name="ced" class="form-control bg-light" placeholder="Ej: 1723456789" required>
+                    <input type="text" name="ced" class="form-control bg-light border-0" placeholder="Ej: 1723456789" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-bold">Nombre Completo</label>
-                    <input type="text" name="nom" class="form-control bg-light" placeholder="Nombres y Apellidos" required>
+                    <input type="text" name="nom" class="form-control bg-light border-0" placeholder="Nombres y Apellidos" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-4">
                     <label class="form-label small fw-bold">Teléfono de Contacto</label>
-                    <input type="text" name="tel" class="form-control bg-light" placeholder="0987654321">
+                    <input type="text" name="tel" class="form-control bg-light border-0" placeholder="0987654321" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 shadow-sm">Guardar Paciente</button>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">
+                    Guardar Paciente
+                </button>
             </form>
+        </div>
+
+        <div class="card mt-3 bg-dark text-white border-0 p-3 shadow-sm">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-cash-stack fs-3 text-info me-3"></i>
+                <div>
+                    <p class="m-0 small">Costo de Consulta</p>
+                    <h5 class="m-0 fw-bold">$20.00 <span class="small fw-normal text-muted">(Fijo)</span></h5>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="col-lg-8">
-        <div class="card p-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold m-0"><i class="bi bi-journal-medical text-info"></i> Listado de Pacientes</h5>
-                <span class="badge bg-secondary">{{ pacientes|length }} Registrados</span>
+                <h4 class="fw-bold m-0"><i class="bi bi-list-ul text-info me-2"></i>Listado de Pacientes</h4>
+                <span class="badge bg-light text-dark border p-2">{{ pacientes|length }} Registrados</span>
             </div>
+
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Identificación</th>
-                            <th>Paciente</th>
-                            <th class="text-center">Acciones</th>
+                            <th class="border-0">Identificación</th>
+                            <th class="border-0">Paciente</th>
+                            <th class="border-0">Teléfono</th>
+                            <th class="border-0 text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for p in pacientes %}
                         <tr>
-                            <td class="fw-bold text-muted">{{ p.cedula_p }}</td>
+                            <td class="fw-bold">{{ p.cedula_p }}</td>
                             <td>{{ p.nombre_p }}</td>
+                            <td class="text-muted">{{ p.telefono }}</td>
                             <td class="text-center">
-                                <a href="{{ url_for('historial', id_p=p.id_paciente) }}" class="btn btn-sm btn-light border">
-                                    <i class="bi bi-eye"></i> Historial
+                                <a href="{{ url_for('historial', id_p=p.id_paciente) }}" class="btn btn-sm btn-outline-info px-3 rounded-pill">
+                                    <i class="bi bi-eye-fill"></i> Historial
                                 </a>
-                                {% if session['rol'] == 'admin' %}
-                                <a href="{{ url_for('eliminar_paciente', id=p.id_paciente) }}"
-                                   class="btn btn-sm btn-outline-danger"
-                                   onclick="return confirm('¿Está seguro de eliminar este registro?')">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-info-circle fs-2 d-block mb-2"></i>
+                                No hay pacientes registrados en el sistema.
                             </td>
                         </tr>
                         {% endfor %}

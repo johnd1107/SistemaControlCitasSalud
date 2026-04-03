@@ -1,42 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-lg border-0" style="width: 100%; max-width: 450px;">
-        <div class="card-header bg-primary text-white text-center py-3">
-            <h4 class="m-0"><i class="bi bi-person-plus-fill me-2"></i>Registrar Médico</h4>
-        </div>
-        <div class="card-body p-4">
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-4">
+        <div class="card shadow-lg p-4 border-0">
+            <h3 class="text-center fw-bold mb-4">Registro Médico</h3>
             <form method="POST">
                 <div class="mb-3">
-                    <label class="form-label fw-bold small">Número de Cédula</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="bi bi-card-id"></i></span>
-                        <input type="text" name="cedula" class="form-control" placeholder="Ej: 1723456789" required>
-                    </div>
+                    <label class="form-label small fw-bold">Cédula</label>
+                    <input type="text" name="cedula" class="form-control bg-light" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-bold small">Nombre y Apellido</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
-                        <input type="text" name="nombre" class="form-control" placeholder="Dr. Nombre Apellido" required>
-                    </div>
+                    <label class="form-label small fw-bold">Nombre Completo</label>
+                    <input type="text" name="nombre" class="form-control bg-light" required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Contraseña de Acceso</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
-                        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                    </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold">Contraseña</label>
+                    <input type="password" name="password" class="form-control bg-light" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow-sm">
-                    Crear Cuenta <i class="bi bi-arrow-right-short"></i>
-                </button>
+                <button type="submit" class="btn btn-primary w-100 py-2">Crear Cuenta</button>
             </form>
-        </div>
-        <div class="card-footer bg-white border-0 text-center pb-4">
-            <p class="text-muted small m-0">
-                ¿Ya eres parte del sistema? <a href="{{ url_for('login') }}" class="text-decoration-none fw-bold">Inicia Sesión</a>
-            </p>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('login') }}" class="text-decoration-none small">Ya tengo cuenta</a>
+            </div>
         </div>
     </div>
 </div>
