@@ -2,33 +2,65 @@
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">Panel de Control: Salud+</h2>
-        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Volver al Inicio</a>
+        <h2 class="fw-bold text-primary">
+            {% if session['rol'] == 'admin' %}Gestión Administrativa{% else %}Panel del Especialista{% endif %}
+        </h2>
+        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary fw-bold">Volver al Inicio</a>
     </div>
 
     <div class="row">
+        {% if session['rol'] == 'admin' %}
         <div class="col-md-4">
             <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-dark text-white fw-bold">Registrar Médico</div>
+                <div class="card-header bg-primary text-white fw-bold">Registrar Médico</div>
                 <div class="card-body">
-                    <form action="{{ url_for('admin_usuarios') }}" method="POST">
+                    <form action="/admin_usuarios" method="POST">
                         <input type="text" name="ced_m" class="form-control mb-2" placeholder="Cédula" required maxlength="10">
                         <input type="text" name="nom_m" class="form-control mb-2" placeholder="Nombre completo" required>
-                        <input type="text" name="esp_m" class="form-control mb-3" placeholder="Especialidad (Medicina General, etc.)" required>
-                        <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">Guardar Información</button>
+                        <input type="text" name="esp_m" class="form-control mb-3" placeholder="Especialidad (Ej: Medicina General)" required>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Guardar Médico</button>
                     </form>
                 </div>
             </div>
         </div>
+        {% endif %}
 
-        <div class="col-md-8">
+        <div class="{% if session['rol'] == 'admin' %}col-md-8{% else %}col-md-12{% endif %}">
             <div class="card shadow-sm border-0 p-3">
-                <ul class="nav nav-pills mb-3">
-                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#m">Médicos</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#p">Pacientes</button></li>
+                <ul class="nav nav-pills mb-3" id="pills-tab">
+                    {% if session['rol'] == 'medico' %}
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-citas">Mis Citas Pendientes</button>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <button class="nav-link {% if session['rol'] == 'admin' %}active{% endif %}" data-bs-toggle="pill" data-bs-target="#tab-medicos">Médicos Activos</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pacientes">Información Pacientes</button>
+                    </li>
                 </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="m">
+
+                <div class="tab-content mt-3">
+                    {% if session['rol'] == 'medico' %}
+                    <div class="tab-pane fade show active" id="tab-citas">
+                        <table class="table table-hover">
+                            <thead class="table-light"><tr><th>Paciente</th><th>Cédula</th><th>Fecha/Hora</th><th>Acción</th></tr></thead>
+                            <tbody>
+                                {% for c in citas_medico %}
+                                <tr>
+                                    <td>{{ c.paciente }}</td>
+                                    <td>{{ c.ced_paciente }}</td>
+                                    <td>{{ c.fecha }} - {{ c.hora }}</td>
+                                    <td><a href="{{ url_for('atender_cita', id_cita=c.id_cita) }}" class="btn btn-sm btn-success">Atender</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    <div class="tab-pane fade {% if session['rol'] == 'admin' %}show active{% endif %}" id="tab-medicos">
                         <table class="table table-hover">
                             <thead><tr><th>Médico</th><th>Especialidad</th><th>Acción</th></tr></thead>
                             <tbody>
@@ -36,22 +68,19 @@
                                 <tr>
                                     <td>{{ m.nombre }}</td>
                                     <td><span class="badge bg-info text-dark">{{ m.especialidad }}</span></td>
-                                    <td><button onclick="window.print()" class="btn btn-sm btn-light border"><i class="bi bi-printer"></i></button></td>
+                                    <td><button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer"></i></button></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
-                    <div class="tab-pane fade" id="p">
+
+                    <div class="tab-pane fade" id="tab-pacientes">
                         <table class="table table-hover">
-                            <thead><tr><th>Paciente</th><th>Edad</th><th>Ubicación</th></tr></thead>
+                            <thead><tr><th>Cédula</th><th>Paciente</th><th>Ubicación</th></tr></thead>
                             <tbody>
                                 {% for p in pacientes %}
-                                <tr>
-                                    <td>{{ p.nombre }}</td>
-                                    <td>{{ p.edad }} años</td>
-                                    <td>{{ p.domicilio }}</td>
-                                </tr>
+                                <tr><td>{{ p.cedula }}</td><td>{{ p.nombre }}</td><td>{{ p.domicilio }}</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>

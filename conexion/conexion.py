@@ -1,15 +1,13 @@
 import sqlite3
 
-
 def obtener_conexion():
     conn = sqlite3.connect('sistema_salud.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-
 def inicializar_db():
     db = obtener_conexion()
-    # Tabla de Usuarios completa
+    # Tabla de Usuarios (Admin, Médicos, Pacientes)
     db.execute("""CREATE TABLE IF NOT EXISTS usuarios (
         id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
         cedula TEXT UNIQUE NOT NULL,
@@ -20,8 +18,7 @@ def inicializar_db():
         edad INTEGER,
         domicilio TEXT
     )""")
-
-    # Tabla de Citas con relación al médico
+    # Tabla de Citas
     db.execute("""CREATE TABLE IF NOT EXISTS citas (
         id_cita INTEGER PRIMARY KEY AUTOINCREMENT,
         id_paciente INTEGER NOT NULL,
@@ -29,20 +26,16 @@ def inicializar_db():
         especialidad TEXT NOT NULL,
         fecha TEXT NOT NULL,
         hora TEXT NOT NULL,
-        estado TEXT DEFAULT 'Pendiente',
-        FOREIGN KEY(id_paciente) REFERENCES usuarios(id_usuario),
-        FOREIGN KEY(id_medico) REFERENCES usuarios(id_usuario)
+        estado TEXT DEFAULT 'Pendiente'
     )""")
-
-    # Tabla de Historial para diagnósticos y recetas
-    db.execute("""CREATE TABLE IF NOT EXISTS historial (
-        id_historial INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_paciente INTEGER NOT NULL,
-        id_medico INTEGER NOT NULL,
-        fecha_atencion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    # NUEVA: Tabla de Consultas (Diagnóstico y Receta)
+    db.execute("""CREATE TABLE IF NOT EXISTS consultas (
+        id_consulta INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_cita INTEGER NOT NULL,
         diagnostico TEXT,
         receta TEXT,
-        FOREIGN KEY(id_paciente) REFERENCES usuarios(id_usuario)
+        fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(id_cita) REFERENCES citas(id_cita)
     )""")
     db.commit()
     db.close()
