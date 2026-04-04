@@ -1,28 +1,15 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5 mt-5">
-        <div class="card p-4 shadow border-0">
-            <h3 class="text-center text-primary fw-bold mb-4">Registro de Paciente</h3>
-            <form method="POST" action="/registro_paciente">
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Cédula:</label>
-                    <input type="text" name="cedula" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Nombre Completo:</label>
-                    <input type="text" name="nombre" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Contraseña:</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-success w-100 fw-bold">Registrarse</button>
-            </form>
-            <div class="text-center mt-3">
-                <a href="/login" class="small">Volver al Login</a>
-            </div>
-        </div>
+<form method="POST" action="/registro_paciente">
+    <div class="mb-3">
+        <label>Cédula:</label>
+        <input type="text" name="cedula" class="form-control" required>
     </div>
-</div>
-{% endblock %}
+    <div class="mb-3">
+        <label>Nombre Completo:</label>
+        <input type="text" name="nombre" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label>Contraseña:</label>
+        <input type="password" name="password" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-success w-100">Registrarse</button>
+</form>
