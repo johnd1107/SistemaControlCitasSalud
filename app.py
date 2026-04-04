@@ -104,6 +104,36 @@ def eliminar_medico(id):
     return redirect(url_for('admin_usuarios'))
 
 
+@app.route('/agendar', methods=['GET', 'POST'])
+def agendar():
+    if 'user_id' not in session or session.get('rol') != 'paciente':
+        return redirect(url_for('login'))
+
+    db = obtener_conexion()
+    if request.method == 'POST':
+        id_m = request.form.get('id_medico')
+        fec = request.form.get('fecha')
+        hor = request.form.get('hora')
+
+        # Obtenemos la especialidad del médico seleccionado para guardarla en la cita
+        medico = db.execute("SELECT especialidad FROM usuarios WHERE id_usuario=?", (id_m,)).fetchone()
+
+        db.execute("""
+            INSERT INTO citas (id_paciente, id_medico, especialidad, fecha, hora) 
+            VALUES (?, ?, ?, ?, ?)
+        """, (session['user_id'], id_m, medico['especialidad'], fec, hor))
+
+        db.commit()
+        db.close()
+        flash("Cita agendada con éxito", "success")
+        return redirect(url_for('index'))
+
+    # Listamos solo a los usuarios que son médicos para el combo desplegable
+    medicos = db.execute("SELECT id_usuario, nombre, especialidad FROM usuarios WHERE rol='medico'").fetchall()
+    db.close()
+    return render_template('agendar.html', medicos=medicos, hoy=date.today())
+
+
 @app.route('/logout')
 def logout():
     session.clear()
