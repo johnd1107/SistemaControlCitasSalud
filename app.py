@@ -3,9 +3,9 @@ from conexion.conexion import obtener_conexion, inicializar_db
 from datetime import date
 
 app = Flask(__name__)
-app.secret_key = 'salud_plus_2026_final_fix'
+app.secret_key = 'salud_plus_pichincha_2026_final'
 
-# Inicializa las tablas (Usuarios, Citas, Consultas)
+# Inicialización de la base de datos
 inicializar_db()
 
 
@@ -15,9 +15,11 @@ def index():
     db = obtener_conexion()
     citas_p = []
     if session['rol'] == 'paciente':
-        citas_p = db.execute("""SELECT c.*, u.nombre as medico FROM citas c 
-                                JOIN usuarios u ON c.id_medico = u.id_usuario 
-                                WHERE c.id_paciente=?""", (session['user_id'],)).fetchall()
+        citas_p = db.execute("""
+            SELECT c.*, u.nombre as medico 
+            FROM citas c JOIN usuarios u ON c.id_medico = u.id_usuario 
+            WHERE c.id_paciente=? ORDER BY c.fecha, c.hora
+        """, (session['user_id'],)).fetchall()
     db.close()
     return render_template('dashboard.html', citas=citas_p)
 
@@ -25,8 +27,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        ced = request.form.get('cedula')
-        pw = request.form.get('password')
+        ced, pw = request.form.get('cedula'), request.form.get('password')
         if ced == 'admin' and pw == '1234':
             session.update({'user_id': 0, 'nombre': 'Administrador', 'rol': 'admin'})
             return redirect(url_for('index'))
@@ -36,29 +37,24 @@ def login():
         if u:
             session.update({'user_id': u['id_usuario'], 'nombre': u['nombre'], 'rol': u['rol']})
             return redirect(url_for('index'))
-        flash("Cédula o contraseña incorrecta", "danger")
+        flash("Credenciales incorrectas", "danger")
     return render_template('login.html')
 
 
-# ESTA ES LA FUNCIÓN QUE DABA EL ERROR "BUILD ERROR"
 @app.route('/registro_paciente', methods=['GET', 'POST'])
 def registro_paciente():
     if request.method == 'POST':
         ced, nom, pw = request.form.get('ced'), request.form.get('nom'), request.form.get('pass')
         ed, di = request.form.get('edad'), request.form.get('dir')
-        if len(ced) != 10:
-            flash("La cédula debe tener 10 dígitos", "warning")
-            return render_template('registro_paciente.html')
         db = obtener_conexion()
         try:
             db.execute(
                 "INSERT INTO usuarios (cedula, nombre, password, rol, edad, domicilio) VALUES (?,?,?, 'paciente',?,?)",
                 (ced, nom, pw, ed, di))
             db.commit()
-            flash("Registro exitoso, ahora inicia sesión", "success")
             return redirect(url_for('login'))
         except:
-            flash("Error: Cédula ya registrada", "danger")
+            flash("Error: El usuario ya existe", "danger")
         finally:
             db.close()
     return render_template('registro_paciente.html')
@@ -68,6 +64,8 @@ def registro_paciente():
 def admin_usuarios():
     if 'user_id' not in session: return redirect(url_for('login'))
     db = obtener_conexion()
+
+    # GUARDAR MÉDICO (CORREGIDO)
     if request.method == 'POST' and session['rol'] == 'admin':
         ced, nom, esp = request.form.get('ced_m'), request.form.get('nom_m'), request.form.get('esp_m')
         db.execute("INSERT INTO usuarios (cedula, nombre, password, rol, especialidad) VALUES (?,?,?,'medico',?)",
@@ -75,43 +73,56 @@ def admin_usuarios():
         db.commit()
 
     medicos = db.execute("SELECT * FROM usuarios WHERE rol='medico'").fetchall()
-    pacientes = db.execute("SELECT * FROM usuarios WHERE rol='paciente'").fetchall()
+
     citas_m = []
     if session['rol'] == 'medico':
-        citas_m = db.execute("""SELECT c.*, u.nombre as paciente, u.cedula, u.domicilio FROM citas c 
-                                JOIN usuarios u ON c.id_paciente = u.id_usuario 
-                                WHERE c.id_medico=? AND c.estado='Pendiente'""", (session['user_id'],)).fetchall()
+        citas_m = db.execute("""
+            SELECT c.*, u.nombre as paciente FROM citas c 
+            JOIN usuarios u ON c.id_paciente = u.id_usuario 
+            WHERE c.id_medico=? ORDER BY c.estado DESC, c.hora ASC
+        """, (session['user_id'],)).fetchall()
+
     db.close()
-    return render_template('admin_usuarios.html', medicos=medicos, pacientes=pacientes, citas_medico=citas_m)
+    return render_template('admin_usuarios.html', medicos=medicos, citas_medico=citas_m)
 
 
-@app.route('/atender/<int:id_cita>', methods=['GET', 'POST'])
-def atender(id_cita):
-    if session.get('rol') != 'medico': return redirect(url_for('index'))
+@app.route('/eliminar_usuario/<int:id_u>')
+def eliminar_usuario(id_u):
+    if session.get('rol') == 'admin':
+        db = obtener_conexion()
+        db.execute("DELETE FROM usuarios WHERE id_usuario=?", (id_u,))
+        db.commit()
+        db.close()
+    return redirect(url_for('admin_usuarios'))
+
+
+@app.route('/agendar', methods=['GET', 'POST'])
+def agendar():
+    if 'user_id' not in session: return redirect(url_for('login'))
     db = obtener_conexion()
     if request.method == 'POST':
-        diag, rece = request.form.get('diag'), request.form.get('rece')
-        db.execute("INSERT INTO consultas (id_cita, diagnostico, receta) VALUES (?,?,?)", (id_cita, diag, rece))
-        db.execute("UPDATE citas SET estado='Atendido' WHERE id_cita=?", (id_cita,))
+        id_m, fec, hor = request.form.get('id_medico'), request.form.get('fecha'), request.form.get('hora')
+        m = db.execute("SELECT especialidad FROM usuarios WHERE id_usuario=?", (id_m,)).fetchone()
+        esp = m['especialidad'] if m else "General"
+        db.execute(
+            "INSERT INTO citas (id_paciente, id_medico, especialidad, fecha, hora, estado) VALUES (?,?,?,?,?,'Pendiente')",
+            (session['user_id'], id_m, esp, fec, hor))
         db.commit();
         db.close()
-        flash("Consulta finalizada", "success")
-        return redirect(url_for('admin_usuarios'))
-    cita = db.execute(
-        "SELECT c.*, u.nombre as paciente, u.cedula, u.edad FROM citas c JOIN usuarios u ON c.id_paciente = u.id_usuario WHERE id_cita=?",
-        (id_cita,)).fetchone()
+        return redirect(url_for('index'))
+
+    medicos = db.execute("SELECT id_usuario, nombre, especialidad FROM usuarios WHERE rol='medico'").fetchall()
     db.close()
-    return render_template('atender.html', cita=cita)
+    return render_template('agendar.html', medicos=medicos, hoy=date.today())
 
 
-@app.route('/imprimir_turno/<int:id_cita>')
-def imprimir_turno(id_cita):
+@app.route('/atender/<int:id_cita>')
+def atender(id_cita):
     db = obtener_conexion()
-    d = db.execute("""SELECT c.*, p.nombre as paciente, m.nombre as medico 
-                      FROM citas c JOIN usuarios p ON c.id_paciente = p.id_usuario 
-                      JOIN usuarios m ON c.id_medico = m.id_usuario WHERE c.id_cita=?""", (id_cita,)).fetchone()
+    db.execute("UPDATE citas SET estado='Atendido' WHERE id_cita=?", (id_cita,))
+    db.commit();
     db.close()
-    return render_template('imprimir_turno.html', d=d)
+    return redirect(url_for('admin_usuarios'))
 
 
 @app.route('/logout')

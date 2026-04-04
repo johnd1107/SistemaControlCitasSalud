@@ -1,47 +1,47 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">Control de Salud+</h2>
-        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary fw-bold">Ir al Dashboard</a>
-    </div>
-
-    <div class="row">
+    <div class="row g-4">
         {% if session['rol'] == 'admin' %}
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 mb-4 p-3">
-                <h5 class="fw-bold text-dark">Registrar Nuevo Médico</h5>
-                <form action="/admin_usuarios" method="POST">
-                    <input type="text" name="ced_m" class="form-control mb-2" placeholder="Cédula" required maxlength="10">
-                    <input type="text" name="nom_m" class="form-control mb-2" placeholder="Nombre completo" required>
-                    <input type="text" name="esp_m" class="form-control mb-3" placeholder="Especialidad" required>
-                    <button type="submit" class="btn btn-primary w-100 fw-bold">Guardar Médico</button>
-                </form>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white py-3 fw-bold"><i class="bi bi-person-plus me-2"></i>Nuevo Médico</div>
+                <div class="card-body p-4">
+                    <form action="/admin_usuarios" method="POST">
+                        <input type="text" name="ced_m" class="form-control mb-3" placeholder="Cédula" required>
+                        <input type="text" name="nom_m" class="form-control mb-3" placeholder="Nombre completo" required>
+                        <input type="text" name="esp_m" class="form-control mb-4" placeholder="Especialidad" required>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Guardar</button>
+                    </form>
+                </div>
             </div>
         </div>
         {% endif %}
 
-        <div class="{% if session['rol'] == 'admin' %}col-md-8{% else %}col-md-12{% endif %}">
-            <div class="card shadow-sm border-0 p-3">
-                <ul class="nav nav-pills mb-3">
+        <div class="{% if session['rol'] == 'admin' %}col-lg-8{% else %}col-lg-12{% endif %}">
+            <div class="card shadow-sm border-0 rounded-4 p-4">
+                <ul class="nav nav-pills mb-4 bg-light p-1 rounded-pill shadow-sm">
                     {% if session['rol'] == 'medico' %}
-                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t1">Mis Citas Pendientes</button></li>
+                    <li class="nav-item flex-fill"><button class="nav-link active rounded-pill fw-bold w-100" data-bs-toggle="pill" data-bs-target="#agenda">Agenda</button></li>
                     {% endif %}
-                    <li class="nav-item"><button class="nav-link {% if session['rol'] == 'admin' %}active{% endif %}" data-bs-toggle="pill" data-bs-target="#t2">Lista de Médicos</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t3">Base de Pacientes</button></li>
+                    <li class="nav-item flex-fill"><button class="nav-link {% if session['rol'] == 'admin' %}active{% endif %} rounded-pill fw-bold w-100" data-bs-toggle="pill" data-bs-target="#staff">Médicos Registrados</button></li>
                 </ul>
 
                 <div class="tab-content">
                     {% if session['rol'] == 'medico' %}
-                    <div class="tab-pane fade show active" id="t1">
-                        <table class="table table-hover">
-                            <thead><tr><th>Paciente</th><th>Cédula</th><th>Acción</th></tr></thead>
+                    <div class="tab-pane fade show active" id="agenda">
+                        <table class="table align-middle">
+                            <thead><tr><th>Hora</th><th>Paciente</th><th>Estado</th><th>Acción</th></tr></thead>
                             <tbody>
                                 {% for c in citas_medico %}
                                 <tr>
+                                    <td>{{ c.hora }}</td>
                                     <td>{{ c.paciente }}</td>
-                                    <td>{{ c.cedula }}</td>
-                                    <td><a href="{{ url_for('atender', id_cita=c.id_cita) }}" class="btn btn-sm btn-success">Atender Paciente</a></td>
+                                    <td><span class="badge {% if c.estado == 'Pendiente' %}bg-warning{% else %}bg-danger{% endif %}">{{ c.estado }}</span></td>
+                                    <td>
+                                        {% if c.estado == 'Pendiente' %}<a href="/atender/{{c.id_cita}}" class="btn btn-success btn-sm px-3 rounded-pill">Atender</a>
+                                        {% else %}<button class="btn btn-danger btn-sm px-3 rounded-pill" disabled>Atendido</button>{% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -49,27 +49,20 @@
                     </div>
                     {% endif %}
 
-                    <div class="tab-pane fade {% if session['rol'] == 'admin' %}show active{% endif %}" id="t2">
-                        <table class="table table-hover">
-                            <thead><tr><th>Nombre</th><th>Especialidad</th><th>Acción</th></tr></thead>
+                    <div class="tab-pane fade {% if session['rol'] == 'admin' %}show active{% endif %}" id="staff">
+                        <table class="table align-middle">
+                            <thead><tr><th>Nombre</th><th>Especialidad</th>{% if session['rol'] == 'admin' %}<th class="text-end">Opciones</th>{% endif %}</tr></thead>
                             <tbody>
                                 {% for m in medicos %}
                                 <tr>
-                                    <td>{{ m.nombre }}</td>
-                                    <td>{{ m.especialidad }}</td>
-                                    <td><button onclick="imprimirMedico('{{m.nombre}}','{{m.especialidad}}','{{m.cedula}}')" class="btn btn-sm btn-outline-dark"><i class="bi bi-printer"></i> Ficha</button></td>
+                                    <td class="fw-bold">{{ m.nombre }}</td>
+                                    <td><span class="badge bg-info text-dark">{{ m.especialidad }}</span></td>
+                                    <td class="text-end">
+                                        {% if session['rol'] == 'admin' %}
+                                        <a href="/eliminar_usuario/{{m.id_usuario}}" class="btn btn-outline-danger btn-sm rounded-circle" onclick="return confirm('¿Eliminar médico?')"><i class="bi bi-trash"></i></a>
+                                        {% endif %}
+                                    </td>
                                 </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="tab-pane fade" id="t3">
-                        <table class="table table-hover">
-                            <thead><tr><th>Cédula</th><th>Nombre</th><th>Ubicación</th></tr></thead>
-                            <tbody>
-                                {% for p in pacientes %}
-                                <tr><td>{{ p.cedula }}</td><td>{{ p.nombre }}</td><td>{{ p.domicilio }}</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -79,16 +72,4 @@
         </div>
     </div>
 </div>
-
-<script>
-function imprimirMedico(nom, esp, ced) {
-    const v = window.open('', '_blank');
-    v.document.write(`<html><body style="font-family:sans-serif; text-align:center; padding:40px;">
-        <h2>SALUD+ - FICHA INDIVIDUAL</h2><hr>
-        <p><strong>Médico:</strong> ${nom}</p>
-        <p><strong>Especialidad:</strong> ${esp}</p>
-        <p><strong>Identificación:</strong> ${ced}</p>
-        <script>window.print(); window.close();<\/script></body></html>`);
-}
-</script>
 {% endblock %}
