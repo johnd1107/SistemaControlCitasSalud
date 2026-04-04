@@ -1,28 +1,34 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg border-0 rounded-4 p-4 mx-auto" style="max-width: 500px;">
-        <h3 class="text-center fw-bold text-primary mb-4">Nuevo Turno</h3>
-        <form action="/agendar" method="POST">
-            <div class="mb-3">
-                <label class="form-label fw-bold">Médico Especialista</label>
-                <select name="id_medico" class="form-select shadow-sm" required>
-                    <option value="" disabled selected>Seleccione...</option>
-                    {% for m in medicos %}
-                    <option value="{{ m.id_usuario }}">{{ m.nombre }} - {{ m.especialidad }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Fecha</label>
-                <input type="date" name="fecha" class="form-control" min="{{ hoy }}" required>
-            </div>
-            <div class="mb-4">
-                <label class="form-label fw-bold">Hora</label>
-                <input type="time" name="hora" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow">Confirmar Cita</button>
-        </form>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4 shadow-sm mt-4">
+            <h3 class="text-primary fw-bold mb-4">Agendar Cita Médica</h3>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Seleccione el Médico:</label>
+                    <select name="id_medico" class="form-select" required>
+                        {% for m in medicos %}
+                        <option value="{{ m.id_usuario }}">{{ m.nombre }} ({{ m.especialidad }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Fecha:</label>
+                        <input type="date" name="fecha" class="form-control" min="{{ hoy }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Hora:</label>
+                        <input type="time" name="hora" class="form-control" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <a href="/" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary fw-bold">Confirmar Cita</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

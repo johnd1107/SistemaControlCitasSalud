@@ -1,75 +1,57 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <div class="row g-4">
-        {% if session['rol'] == 'admin' %}
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-primary text-white py-3 fw-bold"><i class="bi bi-person-plus me-2"></i>Nuevo Médico</div>
-                <div class="card-body p-4">
-                    <form action="/admin_usuarios" method="POST">
-                        <input type="text" name="ced_m" class="form-control mb-3" placeholder="Cédula" required>
-                        <input type="text" name="nom_m" class="form-control mb-3" placeholder="Nombre completo" required>
-                        <input type="text" name="esp_m" class="form-control mb-4" placeholder="Especialidad" required>
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Guardar</button>
-                    </form>
-                </div>
-            </div>
+
+{% if session['rol'] == 'admin' %}
+<div class="card p-4 mb-4 border-primary">
+    <h3 class="text-primary fw-bold">Registrar Nuevo Médico</h3>
+    <form method="POST" class="row g-3">
+        <div class="col-md-3">
+            <label class="form-label">Cédula:</label>
+            <input type="text" name="ced_m" class="form-control" required>
         </div>
-        {% endif %}
-
-        <div class="{% if session['rol'] == 'admin' %}col-lg-8{% else %}col-lg-12{% endif %}">
-            <div class="card shadow-sm border-0 rounded-4 p-4">
-                <ul class="nav nav-pills mb-4 bg-light p-1 rounded-pill shadow-sm">
-                    {% if session['rol'] == 'medico' %}
-                    <li class="nav-item flex-fill"><button class="nav-link active rounded-pill fw-bold w-100" data-bs-toggle="pill" data-bs-target="#agenda">Agenda</button></li>
-                    {% endif %}
-                    <li class="nav-item flex-fill"><button class="nav-link {% if session['rol'] == 'admin' %}active{% endif %} rounded-pill fw-bold w-100" data-bs-toggle="pill" data-bs-target="#staff">Médicos Registrados</button></li>
-                </ul>
-
-                <div class="tab-content">
-                    {% if session['rol'] == 'medico' %}
-                    <div class="tab-pane fade show active" id="agenda">
-                        <table class="table align-middle">
-                            <thead><tr><th>Hora</th><th>Paciente</th><th>Estado</th><th>Acción</th></tr></thead>
-                            <tbody>
-                                {% for c in citas_medico %}
-                                <tr>
-                                    <td>{{ c.hora }}</td>
-                                    <td>{{ c.paciente }}</td>
-                                    <td><span class="badge {% if c.estado == 'Pendiente' %}bg-warning{% else %}bg-danger{% endif %}">{{ c.estado }}</span></td>
-                                    <td>
-                                        {% if c.estado == 'Pendiente' %}<a href="/atender/{{c.id_cita}}" class="btn btn-success btn-sm px-3 rounded-pill">Atender</a>
-                                        {% else %}<button class="btn btn-danger btn-sm px-3 rounded-pill" disabled>Atendido</button>{% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% endif %}
-
-                    <div class="tab-pane fade {% if session['rol'] == 'admin' %}show active{% endif %}" id="staff">
-                        <table class="table align-middle">
-                            <thead><tr><th>Nombre</th><th>Especialidad</th>{% if session['rol'] == 'admin' %}<th class="text-end">Opciones</th>{% endif %}</tr></thead>
-                            <tbody>
-                                {% for m in medicos %}
-                                <tr>
-                                    <td class="fw-bold">{{ m.nombre }}</td>
-                                    <td><span class="badge bg-info text-dark">{{ m.especialidad }}</span></td>
-                                    <td class="text-end">
-                                        {% if session['rol'] == 'admin' %}
-                                        <a href="/eliminar_usuario/{{m.id_usuario}}" class="btn btn-outline-danger btn-sm rounded-circle" onclick="return confirm('¿Eliminar médico?')"><i class="bi bi-trash"></i></a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <div class="col-md-4">
+            <label class="form-label">Nombre Completo:</label>
+            <input type="text" name="nom_m" class="form-control" required>
         </div>
-    </div>
+        <div class="col-md-3">
+            <label class="form-label">Especialidad:</label>
+            <input type="text" name="esp_m" class="form-control" placeholder="Ej: Pediatría" required>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Guardar</button>
+        </div>
+    </form>
 </div>
+{% endif %}
+
+<div class="card p-4">
+    <h3 class="fw-bold">Lista de Médicos</h3>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Especialidad</th>
+                <th>Cédula</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in medicos %}
+            <tr>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.especialidad }}</td>
+                <td>{{ m.cedula }}</td>
+                <td>
+                    {% if session['rol'] == 'admin' %}
+                    <a href="/eliminar_medico/{{ m.id_usuario }}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('¿Eliminar a este médico?')">Eliminar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}

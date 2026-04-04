@@ -1,56 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col-12 text-center bg-white p-4 shadow-sm rounded">
-            <h1 class="fw-bold text-primary">Bienvenido, {{ session['nombre'] }}</h1>
-            <p class="text-muted">Panel de Salud+ | Pichincha, Ecuador</p>
-        </div>
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold">Mis Turnos Agendados</h2>
+        <a href="/agendar" class="btn btn-primary fw-bold">+ Agendar Nueva Cita</a>
     </div>
-
-    <div class="row justify-content-center g-4">
-        {% if session['rol'] == 'admin' or session['rol'] == 'medico' %}
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm text-center p-4 h-100">
-                <i class="bi bi-person-gear text-primary fs-1 mb-3"></i>
-                <h4>Administrar</h4>
-                <a href="{{ url_for('admin_usuarios') }}" class="btn btn-primary w-100 fw-bold mt-2">Entrar</a>
-            </div>
-        </div>
-        {% endif %}
-
-        {% if session['rol'] == 'paciente' %}
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm text-center p-4 h-100">
-                <i class="bi bi-calendar-plus text-success fs-1 mb-3"></i>
-                <h4>Nuevo Turno</h4>
-                <a href="{{ url_for('agendar') }}" class="btn btn-success w-100 fw-bold mt-2">Agendar Cita</a>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-
-    {% if session['rol'] == 'paciente' %}
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card shadow-sm border-0 p-4">
-                <h4 class="fw-bold mb-3"><i class="bi bi-clock-history me-2"></i>Mis Citas Agendadas</h4>
-                <table class="table table-hover">
-                    <thead class="table-light"><tr><th>Médico</th><th>Fecha</th><th>Hora</th><th>Acción</th></tr></thead>
-                    <tbody>
-                        {% for c in citas %}
-                        <tr>
-                            <td>{{ c.medico }}</td>
-                            <td>{{ c.fecha }}</td>
-                            <td>{{ c.hora }}</td>
-                            <td><a href="{{ url_for('imprimir_turno', id_cita=c.id_cita) }}" target="_blank" class="btn btn-sm btn-outline-dark"><i class="bi bi-printer"></i> Imprimir Ticket</a></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+    <table class="table table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>Fecha/Hora</th>
+                <th>Médico</th>
+                <th>Especialidad</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in citas %}
+            <tr>
+                <td>{{ c.fecha }} - {{ c.hora }}</td>
+                <td>{{ c.medico }}</td>
+                <td>{{ c.especialidad }}</td>
+                <td><span class="badge bg-info text-dark">{{ c.estado }}</span></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center">No tienes turnos agendados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

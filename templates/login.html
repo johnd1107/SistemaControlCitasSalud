@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow border-0 p-4" style="width: 380px; border-radius: 15px;">
-        <h3 class="text-center fw-bold text-primary mb-4">Salud+</h3>
-        <form action="/login" method="POST">
-            <div class="mb-3">
-                <input type="text" name="cedula" class="form-control" placeholder="Cédula / Usuario" required>
+<div class="row justify-content-center">
+    <div class="col-md-4 mt-5">
+        <div class="card p-4 shadow border-0">
+            <h3 class="text-center text-primary fw-bold mb-4">Salud+ Acceso</h3>
+            <form action="/login" method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Usuario o Cédula:</label>
+                    <input type="text" name="cedula" class="form-control" placeholder="admin / tu cédula" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Contraseña:</label>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold">Ingresar</button>
+            </form>
+            <hr>
+            <div class="text-center">
+                <a href="/registro_paciente" class="small text-decoration-none">¿Nuevo paciente? Regístrate aquí</a>
             </div>
-            <div class="mb-3">
-                <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">Entrar</button>
-        </form>
-        <div class="text-center mt-3">
-            <p class="small">¿Nuevo paciente? <a href="{{ url_for('registro_paciente') }}">Regístrate aquí</a></p>
         </div>
     </div>
 </div>
