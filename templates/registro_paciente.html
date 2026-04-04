@@ -1,19 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card shadow border-0 rounded-4 p-4">
-            <h3 class="text-center fw-bold text-primary mb-4">Registro de Paciente</h3>
-            <form action="/registro_paciente" method="POST">
-                <input type="text" name="ced" class="form-control mb-2" placeholder="Cédula" required>
-                <input type="text" name="nom" class="form-control mb-2" placeholder="Nombre completo" required>
-                <input type="password" name="pass" class="form-control mb-2" placeholder="Contraseña" required>
-                <div class="row mb-4">
-                    <div class="col-4"><input type="number" name="edad" class="form-control" placeholder="Edad" required></div>
-                    <div class="col-8"><input type="text" name="dir" class="form-control" placeholder="Dirección" required></div>
+<div class="row justify-content-center">
+    <div class="col-md-5 mt-5">
+        <div class="card p-4 shadow border-0">
+            <h3 class="text-center text-primary fw-bold mb-4">Registro de Paciente</h3>
+            <form method="POST" action="/registro_paciente">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Cédula:</label>
+                    <input type="text" name="cedula" class="form-control" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100 fw-bold">Registrar mi cuenta</button>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre Completo:</label>
+                    <input type="text" name="nombre" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Contraseña:</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100 fw-bold">Registrarse</button>
             </form>
+            <div class="text-center mt-3">
+                <a href="/login" class="small">Volver al Login</a>
+            </div>
         </div>
     </div>
 </div>
